@@ -13,11 +13,14 @@ import { AppService } from './app.service';
 import { configuration } from './config/index';
 
 // Import filters
-import { AllExceptionsFilter } from './filters/all-exception.filter';
-import { BadRequestExceptionFilter } from './filters/bad-request-exception.filter';
-import { ForbiddenExceptionFilter } from './filters/forbidden-exception.filter';
-import { UnauthorizedExceptionFilter } from './filters/unauthorized-exception.filter';
-import { ValidationExceptionFilter } from './filters/validator-exception.filter';
+import {
+  AllExceptionsFilter,
+  BadRequestExceptionFilter,
+  ForbiddenExceptionFilter,
+  NotFoundExceptionFilter,
+  UnauthorizedExceptionFilter,
+  ValidationExceptionFilter,
+} from './filters';
 
 // Import other modules
 
@@ -63,6 +66,7 @@ import { ValidationExceptionFilter } from './filters/validator-exception.filter'
     { provide: APP_FILTER, useClass: BadRequestExceptionFilter },
     { provide: APP_FILTER, useClass: UnauthorizedExceptionFilter },
     { provide: APP_FILTER, useClass: ForbiddenExceptionFilter },
+    { provide: APP_FILTER, useClass: NotFoundExceptionFilter },
     {
       // Allowing to do validation through DTO
       // Since class-validator library default throw BadRequestException, here we use exceptionFactory to throw
