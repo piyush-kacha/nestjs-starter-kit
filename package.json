@@ -3,6 +3,9 @@
   "version": "0.0.1",
   "description": "Nest.js with MongoDB, Express, Clustering, Swagger, Pino, Exception handling",
   "main": "dist/main.js",
+  "engines": {
+    "node": "^16 || ^18"
+  },
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
