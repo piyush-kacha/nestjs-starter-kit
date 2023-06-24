@@ -4,7 +4,8 @@
   "description": "Nest.js with MongoDB, Express, Clustering, Swagger, Pino, Exception handling",
   "main": "dist/main.js",
   "engines": {
-    "node": "^16 || ^18"
+    "node": "^16 || ^18",
+    "npm": "^9.x"
   },
   "scripts": {
     "build": "nest build",
