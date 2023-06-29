@@ -33,19 +33,7 @@ import {
     }),
 
     // Configure logging
-    LoggerModule.forRootAsync({
-      imports: [ConfigModule], // Import the ConfigModule so that it can be injected into the factory function
-      inject: [ConfigService], // Inject the ConfigService into the factory function
-      useFactory: async (configService: ConfigService) => {
-        // Get the required configuration settings from the ConfigService
-        const NODE_ENV = configService.get('env');
-        const LOG_LEVEL = configService.get('logLevel');
-        const CLUSTERING = configService.get('clustering');
-
-        // Return the configuration for the logger
-        return AppConfig.getLoggerConfig(LOG_LEVEL, NODE_ENV, CLUSTERING);
-      },
-    }),
+    LoggerModule.forRoot(AppConfig.getLoggerConfig()), // ! forRootAsync is not working with ConfigService in nestjs-pino
 
     // Configure mongoose
     MongooseModule.forRootAsync({
