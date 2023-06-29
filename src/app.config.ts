@@ -7,8 +7,9 @@ import { Params } from 'nestjs-pino'; // Used to define parameters for the Pino 
 import { LogLevel, NodeEnv } from './shared/enums'; // Import application enums
 
 export class AppConfig {
-  public static getLoggerConfig(LOG_LEVEL, NODE_ENV, CLUSTERING): Params {
+  public static getLoggerConfig(): Params {
     // Define the configuration for the Pino logger
+    const { NODE_ENV, LOG_LEVEL, CLUSTERING } = process.env;
 
     return {
       exclude: [], // Exclude specific path from the logs and may not work for e2e testing

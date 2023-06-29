@@ -1,6 +1,6 @@
 {
   "name": "nestjs-starter-kit",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Nest.js with MongoDB, Express, Clustering, Swagger, Pino, Exception handling",
   "main": "dist/main.js",
   "scripts": {
