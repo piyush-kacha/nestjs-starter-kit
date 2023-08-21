@@ -1,8 +1,7 @@
 {
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "semanticCommits": "enabled",
+  "semanticCommits": true,
   "packageRules": [{
-    "matchDepTypes": ["devDependencies"],
+    "depTypeList": ["devDependencies"],
     "automerge": true
   }],
   "extends": [
