@@ -21,6 +21,9 @@ import {
   UnauthorizedExceptionFilter,
   ValidationExceptionFilter,
 } from './filters';
+import { AuthModule } from './modules/auth/auth.module';
+import { UserModule } from './modules/user/user.module';
+import { WorkspaceModule } from './modules/workspace/workspace.module';
 
 // Import other modules
 
@@ -45,6 +48,9 @@ import {
       }),
     }),
     // Import other modules
+    AuthModule,
+    UserModule,
+    WorkspaceModule,
   ],
   controllers: [AppController], // Define the application's controller
   providers: [
