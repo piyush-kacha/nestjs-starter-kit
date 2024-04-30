@@ -19,6 +19,7 @@ export class JwtUserStrategy extends PassportStrategy(Strategy, 'authUser') {
     });
   }
 
+  // validate method is called by passport-jwt when it has verified the token signature
   async validate(payload: JwtUserPayload) {
     const user = await this.userQueryService.findById(payload.user);
     if (!user) {
@@ -30,7 +31,7 @@ export class JwtUserStrategy extends PassportStrategy(Strategy, 'authUser') {
     if (payload.code !== user.registerCode) {
       throw UnauthorizedException.REQUIRED_RE_AUTHENTICATION();
     }
-    delete user.password;
+    delete user.password; // remove password from the user object
     return user;
   }
 }
