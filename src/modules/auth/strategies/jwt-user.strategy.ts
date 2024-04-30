@@ -30,6 +30,7 @@ export class JwtUserStrategy extends PassportStrategy(Strategy, 'authUser') {
     if (payload.code !== user.registerCode) {
       throw UnauthorizedException.REQUIRED_RE_AUTHENTICATION();
     }
+    delete user.password;
     return user;
   }
 }
