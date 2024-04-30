@@ -36,7 +36,8 @@ export class UnauthorizedException extends HttpException {
   /** The detailed description of the error. */
   @ApiProperty({
     description: 'A description of the error message.',
-    example: 'This error message indicates that the authentication token provided with the request has expired, and therefore the server cannot verify the users identity.',
+    example:
+      'This error message indicates that the authentication token provided with the request has expired, and therefore the server cannot verify the users identity.',
   })
   description: string;
 
@@ -180,7 +181,9 @@ export class UnauthorizedException extends HttpException {
    */
   static REQUIRED_RE_AUTHENTICATION = (msg?: string) => {
     return new UnauthorizedException({
-      message: msg || 'Your previous login session has been terminated due to a password change or reset. Please log in again with your new password.',
+      message:
+        msg ||
+        'Your previous login session has been terminated due to a password change or reset. Please log in again with your new password.',
       code: ExceptionConstants.UnauthorizedCodes.REQUIRED_RE_AUTHENTICATION,
     });
   };
