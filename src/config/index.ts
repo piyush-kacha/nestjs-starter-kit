@@ -1,6 +1,4 @@
-import { IAppConfig, appConfig } from './app.config';
 import { IDatabaseConfig, databaseConfig } from './database.config';
-import { ITransmitterConfig, transmitterConfig } from './transmitter.config';
 import { NodeEnv } from '../shared/enums/node-env.enum';
 
 export interface IConfig {
@@ -10,9 +8,6 @@ export interface IConfig {
   logLevel: string;
   clustering: string;
   database: IDatabaseConfig;
-  logo: string;
-  app: IAppConfig;
-  transmitter: ITransmitterConfig;
 }
 
 export const configuration = (): Partial<IConfig> => ({
@@ -22,6 +17,4 @@ export const configuration = (): Partial<IConfig> => ({
   logLevel: process.env.LOG_LEVEL,
   clustering: process.env.CLUSTERING,
   database: databaseConfig(),
-  app: appConfig(),
-  transmitter: transmitterConfig(),
 });
