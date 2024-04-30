@@ -37,6 +37,17 @@ export class User {
   @Prop()
   password?: string;
 
+  // workspace is the unique identifier of the workspace that the user belongs to
+  @ApiProperty({
+    description: 'The unique identifier of the workspace',
+    example: '643405452324db8c464c0584',
+  })
+  @Prop({
+    type: MongooseSchema.Types.ObjectId,
+    ref: DatabaseCollectionNames.WORKSPACE,
+  })
+  workspace: Identifier;
+
   // name is the full name of the user
   @ApiProperty({
     description: 'The full name of the user',
@@ -80,13 +91,6 @@ export class User {
     type: MongooseSchema.Types.Number,
   })
   registerCode?: number;
-
-  @ApiHideProperty()
-  @Prop({
-    type: MongooseSchema.Types.Boolean,
-    default: false,
-  })
-  isActive?: boolean;
 
   @ApiProperty({
     description: 'Date of creation',

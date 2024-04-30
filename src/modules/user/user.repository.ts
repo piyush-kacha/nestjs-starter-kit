@@ -1,9 +1,14 @@
+// Purpose: User repository for user module.
+// External dependencies
 import { FilterQuery, Model, QueryOptions, Types, UpdateQuery } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Injectable } from '@nestjs/common';
 
-import { DatabaseCollectionNames } from '../../shared/enums/db.enum';
+// Internal dependencies
 import { User, UserDocument } from './user.schema';
+
+// Shared dependencies
+import { DatabaseCollectionNames } from '../../shared/enums/db.enum';
 
 @Injectable()
 export class UserRepository {

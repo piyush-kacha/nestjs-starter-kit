@@ -11,6 +11,7 @@ import { JwtUserStrategy } from './strategies/jwt-user.strategy';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { UserModule } from '../user/user.module';
+import { WorkspaceModule } from '../workspace/workspace.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { UserModule } from '../user/user.module';
       }),
     }),
     UserModule,
+    WorkspaceModule,
   ],
   providers: [JwtUserStrategy, AuthService],
   controllers: [AuthController],

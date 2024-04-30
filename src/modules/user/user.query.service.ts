@@ -1,25 +1,22 @@
+// Objective: Implement the user query service to handle the user queries
+// External dependencies
 import { Injectable } from '@nestjs/common';
 
+// Internal dependencies
+import { User, UserDocument } from './user.schema';
 import { UserRepository } from './user.repository';
 
+// Other modules dependencies
+
+// Shared dependencies
 import { Identifier } from '../../shared/types/schema.type';
 import { InternalServerErrorException } from '../../exceptions/internal-server-error.exception';
-import { User, UserDocument } from './user.schema';
 
 @Injectable()
 export class UserQueryService {
   constructor(private readonly userRepository: UserRepository) {}
 
-  /**
-   * Generates a random six digit OTP
-   * @returns {number} - returns the generated OTP
-   */
-  generateCode(): number {
-    const OTP_MIN = 100000;
-    const OTP_MAX = 999999;
-    return Math.floor(Math.random() * (OTP_MAX - OTP_MIN + 1)) + OTP_MIN;
-  }
-
+  // findByEmail is a method that finds a user by their email address
   async findByEmail(email: string): Promise<User> {
     try {
       return await this.userRepository.findOne({ email });
@@ -28,6 +25,7 @@ export class UserQueryService {
     }
   }
 
+  // findById is a method that finds a user by their unique identifier
   async findById(id: Identifier): Promise<User> {
     try {
       return await this.userRepository.findById(id);
@@ -36,13 +34,9 @@ export class UserQueryService {
     }
   }
 
-  async createVerifiedUser(user: User): Promise<UserDocument> {
+  // create is a method that creates a new user
+  async create(user: User): Promise<UserDocument> {
     try {
-      user.isActive = true;
-      user.verified = true;
-      user.registerCode = this.generateCode();
-      user.verificationCode = null;
-      user.verificationCodeExpiry = null;
       return await this.userRepository.create(user);
     } catch (error) {
       throw InternalServerErrorException.INTERNAL_SERVER_ERROR(error);
