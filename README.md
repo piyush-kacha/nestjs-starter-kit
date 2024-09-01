@@ -197,12 +197,6 @@ nestjs-starter-kit/
 ├── package.json
 ├── renovate.json
 ```
-# NestJS Starter Kit
-
-A boilerplate project for building a scalable and maintainable NestJS application.
-
-## Project Structure Overview
-
 This project follows a structured organization to maintain clean, scalable code, promoting best practices for enterprise-level applications.
 
 ### 1. Root Files and Configuration
