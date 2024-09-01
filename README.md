@@ -63,13 +63,6 @@ To run the application in production mode, use the following command:
 npm run start:prod
 ```
 
-## Contributing
-Contributions are welcome! If you find a bug or have a feature request, please open an issue. If you would like to contribute code, please fork the repository and submit a pull request.
-
-## License
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
-
 ## Features:
 1. **Modularity**: The project structure follows a modular approach, organizing files into directories based on their functionalities. This makes it easier to locate and maintain code related to specific features or components of the application.
 
