@@ -41,7 +41,7 @@
     "axios": "^1.6.8",
     "bcryptjs": "^2.4.3",
     "class-transformer": "^0.5.1",
-    "class-validator": "^0.14.0",
+    "class-validator": "^0.14.1",
     "mongoose": "^8.6.0",
     "nestjs-pino": "^4.0.0",
     "passport-jwt": "^4.0.1",
