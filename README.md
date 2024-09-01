@@ -98,19 +98,89 @@ By leveraging this code structure, you can benefit from the well-organized and m
 
 ```bash
 nestjs-starter-kit/
+.
+├── Dockerfile
+├── LICENSE
+├── README.md
 ├── .husky/
 │   ├── commit-msg
 │   └── pre-commit
-├── src/
-│   ├── config/
-│   ├── exceptions/
-│   ├── filters/
-│   ├── shared/
-│   ├── app.config.ts
-│   ├── app.controller.ts
-│   ├── app.module.ts
-│   ├── app.service.ts
-│   └── main.ts
+├── src
+│   ├── app.config.ts
+│   ├── app.controller.spec.ts
+│   ├── app.controller.ts
+│   ├── app.module.ts
+│   ├── app.service.ts
+│   ├── config
+│   │   ├── database.config.ts
+│   │   ├── index.ts
+│   │   └── jwt.config.ts
+│   ├── exceptions
+│   │   ├── bad-request.exception.ts
+│   │   ├── exceptions.constants.ts
+│   │   ├── exceptions.interface.ts
+│   │   ├── forbidden.exception.ts
+│   │   ├── index.ts
+│   │   ├── internal-server-error.exception.ts
+│   │   └── unauthorized.exception.ts
+│   ├── filters
+│   │   ├── all-exception.filter.ts
+│   │   ├── bad-request-exception.filter.ts
+│   │   ├── forbidden-exception.filter.ts
+│   │   ├── index.ts
+│   │   ├── internal-server-error-exception.filter.ts
+│   │   ├── not-found-exception.filter.ts
+│   │   ├── unauthorized-exception.filter.ts
+│   │   └── validator-exception.filter.ts
+│   ├── main.ts
+│   ├── modules
+│   │   ├── auth
+│   │   │   ├── auth.controller.ts
+│   │   │   ├── auth.module.ts
+│   │   │   ├── auth.service.ts
+│   │   │   ├── decorators
+│   │   │   │   └── get-user.decorator.ts
+│   │   │   ├── dtos
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── login.req.dto.ts
+│   │   │   │   ├── login.res.dto.ts
+│   │   │   │   ├── signup.req.dto.ts
+│   │   │   │   └── signup.res.dto.ts
+│   │   │   ├── guards
+│   │   │   │   └── jwt-user-auth.guard.ts
+│   │   │   ├── interfaces
+│   │   │   │   └── jwt-user-payload.interface.ts
+│   │   │   └── strategies
+│   │   │       └── jwt-user.strategy.ts
+│   │   ├── user
+│   │   │   ├── dtos
+│   │   │   │   ├── get-profile.res.dto.ts
+│   │   │   │   └── index.ts
+│   │   │   ├── user.controller.ts
+│   │   │   ├── user.module.ts
+│   │   │   ├── user.query.service.ts
+│   │   │   ├── user.repository.ts
+│   │   │   └── user.schema.ts
+│   │   └── workspace
+│   │       ├── workspace.module.ts
+│   │       ├── workspace.query-service.ts
+│   │       ├── workspace.repository.ts
+│   │       └── workspace.schema.ts
+│   └── shared
+│       ├── enums
+│       │   ├── db.enum.ts
+│       │   ├── index.ts
+│       │   ├── log-level.enum.ts
+│       │   └── node-env.enum.ts
+│       └── types
+│           ├── index.ts
+│           └── schema.type.ts
+├── test
+│   ├── app.e2e-spec.ts
+│   └── jest-e2e.json
+├── tsconfig.build.json
+└── tsconfig.json
+├── example.env
 ├── .commitlintrc.js
 ├── .dockerignore
 ├── .editorconfig
@@ -122,198 +192,82 @@ nestjs-starter-kit/
 ├── .npmrc
 ├── .prettierignore
 ├── .prettierrc
-├── Dockerfile
-├── example.env
-├── LICENSE
 ├── nest-cli.json
 ├── package-lock.json
 ├── package.json
-├── tsconfig.build.json
-└── tsconfig.json
+├── renovate.json
 ```
-- `.husky/` directory contains Git hooks for the project.
-- `src/` directory contains the source code for the project.
-  - `config/` directory contains configuration files for the project.
-  - `exceptions/` directory contains exception classes for the project.
-  - `filters/` directory contains filter classes for the project.
-  - `shared/` directory contains shared modules for the project.
-  - `app.config.ts` file contains the configuration for the NestJS application.
-  - `app.controller.ts` file contains the main controller for the NestJS application.
-  - `app.module.ts` file contains the main module for the NestJS application.
-  - `app.service.ts` file contains the main service for the NestJS application.
-  - `main.ts` file is the entry point for the NestJS application.
-- `.commitlintrc.js` file contains the configuration for commit linting.
-- `.dockerignore` file contains patterns to exclude from Docker builds.
-- `.editorconfig` file contains configuration for editor settings.
-- `.eslintignore` file contains patterns to exclude from ESLint checks.
-- `.eslintrc.js` file contains the configuration for ESLint.
-- `.gitignore` file contains patterns to exclude from Git commits.
-- `.lintstagedrc.js` file contains the configuration for lint-staged.
-- `.npmignore` file contains patterns to exclude from npm packages.
-- `.npmrc` file contains configuration for npm.
-- `.prettierignore` file contains patterns to exclude from Prettier formatting.
-- `.prettierrc` file contains the configuration for Prettier.
-- `Dockerfile` file contains the Dockerfile for the project.
-- `example.env` file contains an example environment file.
-- `LICENSE` file contains the license for the project.
-- `nest-cli.json` file contains the configuration for the NestJS CLI.
-- `package-lock.json` file contains the lockfile for npm packages.
-- `package.json` file contains the metadata and dependencies for the project.
-- `tsconfig.build.json` file contains the TypeScript configuration for building the project.
-- `tsconfig.json` file contains the TypeScript configuration for the project.
-# src/main.ts
- The given code is a TypeScript file that creates a NestJS application instance and starts it. It also checks if clustering is enabled and forks workers for each available CPU if it is. The code imports external modules such as `cluster`, `os`, `@nestjs/config`, `@nestjs/swagger`, `@nestjs/common`, and `nestjs-pino`. It also imports an internal module `AppModule`. 
+# NestJS Starter Kit
 
-The `bootstrap()` function creates the NestJS application instance, uses the Pino logger for the application, allows all origins, defines Swagger options and document, sets up the Swagger UI endpoint, gets the configuration service from the application, gets the port number from the configuration, starts the application, and logs a message to indicate that the application is running.
+A boilerplate project for building a scalable and maintainable NestJS application.
 
-If clustering is enabled, the code gets the number of CPUs on the machine, forks workers for each available CPU if the current process is the master process, and logs when a worker process exits. If clustering is not enabled, the code calls the `bootstrap()` function to start the application.
+## Project Structure Overview
 
+This project follows a structured organization to maintain clean, scalable code, promoting best practices for enterprise-level applications.
 
-# src/app.module.ts
+### 1. Root Files and Configuration
 
-This file is the main module of the NestJS application. It imports required modules, application files, filters, and other modules. It also defines the application's controller and service.
+- **`Dockerfile`**: Defines how to build the Docker image for the application, including separate stages for development and production.
+- **`README.md`**: Provides an overview and documentation for the project.
+- **`.husky/`**: Contains Git hooks for automated checks during commit and push operations.
+- **`example.env`**: A sample environment file illustrating the required environment variables.
 
-## Imports
+### 2. Source Code (`src/`)
 
-The following modules are imported:
+- **`app.config.ts`**: Centralizes application configuration settings.
+- **`app.controller.ts`**: Defines the root controller for handling incoming requests.
+- **`app.module.ts`**: The main module that aggregates all the feature modules and services.
+- **`app.service.ts`**: Contains the primary business logic for the application.
+- **`main.ts`**: The entry point of the NestJS application; bootstraps the application and configures clustering.
 
-- `APP_FILTER` and `APP_PIPE` from `@nestjs/core`: These are used to define global filters and pipes for the application.
-- `ConfigModule` and `ConfigService` from `@nestjs/config`: These are used to configure environment variables.
-- `LoggerModule` from `nestjs-pino`: This is used to configure logging.
-- `Module`, `ValidationError`, and `ValidationPipe` from `@nestjs/common`: These are used to define the application's module, validation errors, and validation pipes.
-- `MongooseModule` from `@nestjs/mongoose`: This is used to configure Mongoose.
+#### Subdirectories within `src/`
 
-## Application Files
+- **`config/`**: Stores configuration files (e.g., `database.config.ts`, `jwt.config.ts`) for different aspects of the application.
+- **`exceptions/`**: Custom exception classes (e.g., `bad-request.exception.ts`, `unauthorized.exception.ts`) that extend NestJS's built-in exceptions.
+- **`filters/`**: Custom exception filters (e.g., `all-exception.filter.ts`, `not-found-exception.filter.ts`) for handling different types of errors globally.
+- **`modules/`**: Contains feature modules of the application:
+  - **`auth/`**: Handles authentication-related functionality, including controllers, services, guards, and strategies.
+  - **`user/`**: Manages user-related operations, including controllers, services, repositories, and schemas.
+  - **`workspace/`**: Manages workspace-related functionality, with services, repositories, and schemas.
+- **`shared/`**: Contains shared resources and utilities:
+  - **`enums/`**: Defines enumerations (e.g., `db.enum.ts`, `node-env.enum.ts`) used across the application.
+  - **`types/`**: Custom TypeScript types (e.g., `schema.type.ts`) used for type safety throughout the codebase.
 
-The following application files are imported:
+### 3. Testing (`test/`)
 
-- `AppConfig` from `./app.config`: This is used to get the logger configuration.
-- `AppController` from `./app.controller`: This is the application's controller.
-- `AppService` from `./app.service`: This is the application's service.
-- `configuration` from `./config/index`: This is used to load the environment variables from the configuration file.
+- **`test/`**: Houses end-to-end test specifications (`app.e2e-spec.ts`) and configuration files (`jest-e2e.json`) for testing.
 
-## Filters
+### 4. Configuration and Tooling
 
-The following filters are imported:
+- **`.commitlintrc.js`**: Configures commit message linting rules to enforce a consistent commit history using the Conventional Commits specification.
+- **`.dockerignore`**: Specifies files and directories to be excluded from the Docker image build context.
+- **`.editorconfig`**: Defines coding style settings (e.g., indentation, line endings) to ensure consistency across different editors.
+- **`.eslintignore`**: Specifies files and directories to be ignored by ESLint.
+- **`.eslintrc.js`**: Configures ESLint rules and settings for code quality and style enforcement.
+- **`.gitignore`**: Lists files and directories to be excluded from version control.
+- **`.lintstagedrc.js`**: Configures lint-staged for running linters on staged Git files.
+- **`.npmignore`**: Specifies files and directories to be excluded when publishing the package to npm.
+- **`.npmrc`**: Configures npm-specific settings (e.g., registry URL).
+- **`.prettierignore`**: Lists files and directories to be excluded from Prettier formatting.
+- **`.prettierrc`**: Configures Prettier settings for code formatting.
+- **`nest-cli.json`**: Configuration file for the NestJS CLI, defining paths and settings.
+- **`package.json`**: Lists project metadata, scripts, and dependencies.
+- **`package-lock.json`**: Lockfile for npm dependencies to ensure consistent installs across environments.
+- **`tsconfig.build.json`**: TypeScript configuration for building the project.
+- **`tsconfig.json`**: Main TypeScript configuration file.
 
-- `AllExceptionsFilter` from `./filters`: This is a global filter that catches all exceptions.
-- `BadRequestExceptionFilter` from `./filters`: This is a global filter that catches bad request exceptions.
-- `ForbiddenExceptionFilter` from `./filters`: This is a global filter that catches forbidden exceptions.
-- `NotFoundExceptionFilter` from `./filters`: This is a global filter that catches not found exceptions.
-- `UnauthorizedExceptionFilter` from `./filters`: This is a global filter that catches unauthorized exceptions.
-- `ValidationExceptionFilter` from `./filters`: This is a global filter that catches validation exceptions.
+### Key Features of the Project Structure
 
-## Other Modules
+- **Modular Design**: The application is organized into modules (`modules/` directory), each encapsulating a specific feature set, making the codebase scalable and maintainable.
+- **Centralized Configuration**: All configuration files are stored under `config/`, promoting centralized management of application settings.
+- **Custom Error Handling**: Custom exceptions and filters (`exceptions/` and `filters/` directories) provide granular control over error handling.
+- **Testing and Linting**: The project is set up with robust testing (`test/` directory) and linting tools (`.eslintrc.js`, `.eslintignore`), ensuring high code quality and reliability.
+- **Dockerization**: The `Dockerfile` supports both development and production environments, enabling seamless deployment.
 
-Other modules can be imported here.
+## Contributing
 
-## Configuration
+Contributions are welcome! If you find a bug or have a feature request, please open an issue. If you would like to contribute code, please fork the repository and submit a pull request.
 
-The following configurations are defined:
+## License
 
-- Environment variables are configured using `ConfigModule.forRoot`.
-- Logging is configured using `LoggerModule.forRootAsync`.
-- Mongoose is configured using `MongooseModule.forRootAsync`.
-
-## Providers
-
-The following providers are defined:
-
-- `AppService`: This is the application's service.
-- Global filters are defined using `APP_FILTER` and `useClass`.
-- A global validation pipe is defined using `APP_PIPE` and `useFactory`.
-
-## Controller
-
-The following controller is defined:
-
-- `AppController`: This is the application's controller.
-
-## Service
-
-The following service is defined:
-
-- `AppService`: This is the application's service.
-
-
-# .eslintrc.js
-The given code is a JavaScript file that exports an object containing configuration options for the ESLint linter. ESLint is a popular tool for enforcing code style and catching errors in JavaScript code. 
-
-The configuration options include settings for the TypeScript parser, plugins for ESLint, rules for code style, and settings for the environment in which the code is run. 
-
-Some notable rules include disabling certain TypeScript-specific rules, enabling the removal of unused imports, and sorting imports automatically. 
-
-The configuration object is exported so that it can be used by ESLint to enforce the specified rules and settings. 
-
-# Dockerfile
-
-This is a Dockerfile, which is a script that contains instructions for building a Docker image. A Docker image is a lightweight, standalone, and executable package that includes everything needed to run a piece of software, including the code, runtime, libraries, and system tools. 
-
-This Dockerfile has three main sections, each starting with a `FROM` instruction that specifies the base image to use for that section. 
-
-The first section is for building the image for local development. It starts with a base image of `node:18-alpine` and sets the user to `node`. It then creates a working directory, copies the `package.json` and `package-lock.json` files, installs the app dependencies using `npm ci`, and copies the app source code. 
-
-The second section is for building the image for production. It starts with the same base image and user, creates the working directory, copies the `package.json` and other files, and copies the `node_modules` directory from the development image. It then runs `npm run build` to build the app, sets the `NODE_ENV` environment variable to `production`, and installs only the production dependencies using `npm ci`. 
-
-The third section is for the production image. It starts with the same base image and copies the `node_modules` and `dist` directories from the build image. It then starts the server using the `node dist/main.js` command. 
-
-
-# .prettierrc
-`.prettierrc` is a configuration file for the Prettier code formatter. It specifies the formatting rules for the code in the project.
-
-- `"semi": true` specifies that semicolons should be used at the end of statements.
-- `"trailingComma": "all"` specifies that trailing commas should be used wherever possible.
-- `"singleQuote": true` specifies that single quotes should be used for string literals.
-- `"printWidth": 140` specifies the maximum line length for the code. If a line exceeds this length, it will be wrapped.
-- `"tabWidth": 2` specifies the number of spaces to use for indentation.
-- `"endOfLine": "lf"` specifies the line ending style to use. In this case, it is set to "lf" which stands for "line feed".
-
-# .gitignore
-`.gitignore` is a file that specifies which files and directories should be ignored by Git. Git is a popular version control system that is used to track changes in files and directories.
-
-The `.gitignore` file in this project specifies that the `node_modules` directory should be ignored. This directory contains the dependencies for the project, which are installed using the `npm install` command.
-
-# .env
-`.env` is a file that contains environment variables. Environment variables are variables that are used to configure the application. They are used to store sensitive information such as passwords and API keys.
-
-# .env.example
-`.env.example` is a file that contains example environment variables. It is used to show the format of the environment variables that should be defined in the `.env` file.
-
-
-# .dockerignore
-`.dockerignore` is a file that specifies which files and directories should be ignored by Docker. Docker is a popular tool for building and running containers. Containers are lightweight, standalone, and executable packages that include everything needed to run a piece of software, including the code, runtime, libraries, and system tools.
-
-The `.dockerignore` file in this project specifies that the `node_modules` directory should be ignored. This directory contains the dependencies for the project, which are installed using the `npm install` command.
-
-# .editorconfig
-`.editorconfig` is a file that specifies the formatting rules for the code in the project. It is used by editors and IDEs to ensure that the code is formatted consistently across different editors and IDEs.
-
-- `root = true` specifies that this is the root `.editorconfig` file.
-- `[*]` specifies that the rules apply to all files.
-  - `charset = utf-8` specifies that the character encoding should be UTF-8.
-  - `indent_style = space` specifies that spaces should be used for indentation.
-  - `indent_size = 2` specifies the number of spaces to use for indentation.
-  - `end_of_line = lf` specifies the line ending style to use. In this case, it is set to "lf" which stands for "line feed".
-  - `insert_final_newline = true` specifies that a newline should be inserted at the end of the file.
-  -  `trim_trailing_whitespace = true` specifies that trailing whitespace should be trimmed.
--  `[package.json]` specifies that the rules apply only to `package.json` files.
--  `[*.yml]` specifies that the rules apply only to `.yml` files.
--  `[*.ts]` specifies that the rules apply only to `.ts` files.
-- [More information about EditorConfig](https://editorconfig.org/)
-
-
-# .eslintignore
-`.eslintignore` is a file that specifies which files and directories should be ignored by ESLint. ESLint is a popular tool for enforcing code style and catching errors in JavaScript code.
-
-The `.eslintignore` file in this project specifies that the `node_modules` directory should be ignored. This directory contains the dependencies for the project, which are installed using the `npm install` command.
-
-
-# .commitlintrc.js
-`.commitlintrc.js` is a configuration file for commit linting. It specifies the rules for commit messages in the project.
-
-- `// https://www.conventionalcommits.org/en/v1.0.0` is a comment that provides a link to the Conventional Commits specification, which is a standard for commit messages.
-- `module.exports = { extends: ['@commitlint/config-conventional'] };` exports an object that specifies the configuration for commit linting. In this case, it extends the `config-conventional` preset from the `@commitlint` package, which enforces the Conventional Commits specification.
-
-The Conventional Commits specification defines a standard format for commit messages that makes it easier to understand the changes made in a commit. The format consists of a header, an optional body, and an optional footer. The header contains a type, a scope, and a subject. The type describes the kind of change made (e.g. `feat` for a new feature, `fix` for a bug fix, `docs` for documentation changes, etc.). The scope describes the part of the codebase that was affected by the change. The subject is a brief summary of the change.
-
-By enforcing the Conventional Commits specification, commit linting helps ensure that commit messages are consistent and informative, making it easier to understand the history of the project.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
