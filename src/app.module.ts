@@ -1,30 +1,23 @@
 import { Module } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 
 import { CoreModule } from './core/core.module';
 import {
   AllExceptionsFilter,
   BadRequestExceptionFilter,
-  NotFoundExceptionFilter,
-  UnauthorizedExceptionFilter,
   ForbiddenExceptionFilter,
   GatewayTimeOutExceptionFilter,
+  NotFoundExceptionFilter,
+  UnauthorizedExceptionFilter,
   ValidationExceptionFilter,
 } from './core/filters';
 import { TimeoutInterceptor } from './core/interceptors';
-import { AuthModule } from './modules/auth/auth.module';
+import { ModulesModule } from './modules/modules.module';
 import { JwtUserAuthGuard } from './modules/auth/guards';
-import { UserModule } from './modules/user/user.module';
-import { WorkspaceModule } from './modules/workspace/workspace.module';
 
 @Module({
-  imports: [
-    CoreModule,
-    // Import other modules
-    AuthModule,
-    UserModule,
-    WorkspaceModule,
-  ],
+  imports: [CoreModule, ModulesModule],
   providers: [
     {
       provide: APP_FILTER,
@@ -56,11 +49,13 @@ import { WorkspaceModule } from './modules/workspace/workspace.module';
     },
     {
       provide: APP_INTERCEPTOR,
-      useFactory: () => {
-        // TODO: Move this to config
-        const timeoutInMilliseconds = 30000;
+      useFactory: (configService: ConfigService) => {
+        const timeoutInMilliseconds = configService.get<number>('infra.requestTimeout', {
+          infer: true,
+        });
         return new TimeoutInterceptor(timeoutInMilliseconds);
       },
+      inject: [ConfigService],
     },
     {
       provide: APP_GUARD,
