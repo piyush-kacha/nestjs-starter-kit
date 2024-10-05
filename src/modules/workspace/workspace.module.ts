@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 
-import { DatabaseCollectionNames } from '../../shared/enums/db.enum';
+import { DatabaseCollectionNames } from 'src/shared';
+
 import { WorkspaceQueryService } from './workspace.query-service';
 import { WorkspaceRepository } from './workspace.repository';
 import { WorkspaceSchema } from './workspace.schema';

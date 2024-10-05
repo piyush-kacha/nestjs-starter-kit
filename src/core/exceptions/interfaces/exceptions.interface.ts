@@ -36,3 +36,21 @@ export interface IHttpForbiddenExceptionResponse {
   timestamp: string;
   traceId: string;
 }
+
+export interface IHttpGatewayTimeOutExceptionResponse {
+  code: number;
+  message: string;
+  description?: string;
+  timestamp: string;
+  traceId: string;
+  path: string;
+}
+
+export interface IHttpAllExceptionResponse {
+  code: number;
+  message: string;
+  description: string;
+  error?: unknown;
+  timestamp: string;
+  traceId: string;
+}

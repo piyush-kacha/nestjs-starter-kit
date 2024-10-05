@@ -1,29 +1,31 @@
 // Purpose: User repository for user module.
 // External dependencies
-import { FilterQuery, Model, QueryOptions, Types, UpdateQuery } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Injectable } from '@nestjs/common';
 
-// Internal dependencies
+import { FilterQuery, Model, QueryOptions, Types, UpdateQuery } from 'mongoose';
+
+import { DatabaseCollectionNames } from 'src/shared';
+import { DatabaseAbstractRepository } from 'src/core/database/abstracts';
+
 import { User, UserDocument } from './user.schema';
 
-// Shared dependencies
-import { DatabaseCollectionNames } from '../../shared/enums/db.enum';
-
 @Injectable()
-export class UserRepository {
-  constructor(@InjectModel(DatabaseCollectionNames.USER) private userModel: Model<UserDocument>) {}
+export class UserRepository extends DatabaseAbstractRepository<UserDocument> {
+  constructor(@InjectModel(DatabaseCollectionNames.USER) private userModel: Model<UserDocument>) {
+    super(userModel);
+  }
 
   async find(filter: FilterQuery<UserDocument>): Promise<User[]> {
-    return this.userModel.find(filter).lean();
+    return await this.userModel.find(filter);
   }
 
   async findById(id: string | Types.ObjectId): Promise<User | null> {
-    return this.userModel.findById(id).lean();
+    return await this.userModel.findById(id);
   }
 
   async findOne(filter: FilterQuery<UserDocument>): Promise<User | null> {
-    return this.userModel.findOne(filter).lean();
+    return await this.userModel.findOne(filter);
   }
 
   async create(user: User): Promise<UserDocument> {

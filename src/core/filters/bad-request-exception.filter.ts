@@ -1,30 +1,29 @@
-// Importing required modules and classes from NestJS
 import { ArgumentsHost, Catch, ExceptionFilter, Logger } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
 
-import { InternalServerErrorException } from '../exceptions/internal-server-error.exception';
+import { BadRequestException, IHttpBadRequestExceptionResponse } from '../exceptions';
 
 /**
- * A filter to handle `InternalServerErrorException`.
+ * A filter to handle `BadRequestException`.
  */
-@Catch(InternalServerErrorException)
-export class InternalServerErrorExceptionFilter implements ExceptionFilter {
-  private readonly logger = new Logger(InternalServerErrorException.name);
+@Catch(BadRequestException)
+export class BadRequestExceptionFilter implements ExceptionFilter {
+  private readonly logger = new Logger(BadRequestException.name);
 
   /**
-   * Constructs a new instance of `InternalServerErrorExceptionFilter`.
+   * Constructs a new instance of `BadRequestExceptionFilter`.
    * @param httpAdapterHost - The HttpAdapterHost instance to be used.
    */
   constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
 
   /**
-   * Handles the `InternalServerErrorException` and transforms it into a JSON response.
-   * @param exception - The `InternalServerErrorException` instance that was thrown.
+   * Handles the `BadRequestException` and transforms it into a JSON response.
+   * @param exception - The `BadRequestException` instance that was thrown.
    * @param host - The `ArgumentsHost` instance that represents the current execution context.
    */
-  catch(exception: InternalServerErrorException, host: ArgumentsHost): void {
-    // Logs the exception details at the error level.
-    this.logger.error(exception);
+  catch(exception: BadRequestException, host: ArgumentsHost): void {
+    // Logs the exception details at the verbose level.
+    this.logger.verbose(exception);
 
     // In certain situations `httpAdapter` might not be available in the constructor method,
     // thus we should resolve it here.
@@ -33,7 +32,7 @@ export class InternalServerErrorExceptionFilter implements ExceptionFilter {
     // Retrieves the current HTTP context from the `ArgumentsHost`.
     const ctx = host.switchToHttp();
 
-    // Retrieves the HTTP status code from the `InternalServerErrorException`.
+    // Retrieves the HTTP status code from the `BadRequestException`.
     const httpStatus = exception.getStatus();
 
     // Retrieves the request object from the HTTP context.
@@ -43,7 +42,7 @@ export class InternalServerErrorExceptionFilter implements ExceptionFilter {
     exception.setTraceId(request.id);
 
     // Constructs the response body object.
-    const responseBody = exception.generateHttpResponseBody();
+    const responseBody: IHttpBadRequestExceptionResponse = exception.generateHttpResponseBody();
 
     // Uses the HTTP adapter to send the response with the constructed response body
     // and the HTTP status code.

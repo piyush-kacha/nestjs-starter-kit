@@ -6,16 +6,14 @@ import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcryptjs';
 
 import { generateOTPCode } from 'src/utils';
+import { BadRequestException, UnauthorizedException } from 'src/core/exceptions';
 
 import { UserQueryService } from '../user/user.query.service';
 import { User } from '../user/user.schema';
 import { WorkspaceQueryService } from '../workspace/workspace.query-service';
-import { BadRequestException } from '../../exceptions/bad-request.exception';
-import { UnauthorizedException } from '../../exceptions/unauthorized.exception';
 
 import { LoginReqDto, LoginResDto, SignupReqDto, SignupResDto } from './dtos';
-
-import { JwtUserPayload } from './interfaces/jwt-user-payload.interface';
+import { JwtUserPayload } from './interfaces';
 
 @Injectable()
 export class AuthService {
@@ -48,7 +46,7 @@ export class AuthService {
     const userPayload: User = {
       email,
       password: hashedPassword,
-      workspace: workspace._id,
+      workspace: workspace,
       name,
       verified: true,
       registerCode: generateOTPCode(),

@@ -1,14 +1,14 @@
 import { ArgumentsHost, Catch, ExceptionFilter, Logger } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
 
-import { ForbiddenException } from '../exceptions';
+import { IHttpUnauthorizedExceptionResponse, UnauthorizedException } from '../exceptions';
 
 /**
  * Exception filter to handle unauthorized exceptions
  */
-@Catch(ForbiddenException)
-export class ForbiddenExceptionFilter implements ExceptionFilter {
-  private readonly logger = new Logger(ForbiddenExceptionFilter.name);
+@Catch(UnauthorizedException)
+export class UnauthorizedExceptionFilter implements ExceptionFilter {
+  private readonly logger = new Logger(UnauthorizedExceptionFilter.name);
 
   constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
 
@@ -17,7 +17,7 @@ export class ForbiddenExceptionFilter implements ExceptionFilter {
    * @param exception - The thrown unauthorized exception
    * @param host - The arguments host
    */
-  catch(exception: ForbiddenException, host: ArgumentsHost): void {
+  catch(exception: UnauthorizedException, host: ArgumentsHost): void {
     this.logger.warn(exception);
 
     // In certain situations `httpAdapter` might not be available in the
@@ -35,7 +35,7 @@ export class ForbiddenExceptionFilter implements ExceptionFilter {
     exception.setTraceId(request.id);
 
     // Constructs the response body object.
-    const responseBody = exception.generateHttpResponseBody();
+    const responseBody: IHttpUnauthorizedExceptionResponse = exception.generateHttpResponseBody();
 
     // Uses the HTTP adapter to send the response with the constructed response body
     // and the HTTP status code.

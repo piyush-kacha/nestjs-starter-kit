@@ -1,17 +1,19 @@
-import { Module, ValidationError, ValidationPipe } from '@nestjs/common';
-import { APP_FILTER, APP_PIPE } from '@nestjs/core';
+import { Module } from '@nestjs/common';
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 
+import { CoreModule } from './core/core.module';
 import {
   AllExceptionsFilter,
   BadRequestExceptionFilter,
-  ForbiddenExceptionFilter,
   NotFoundExceptionFilter,
   UnauthorizedExceptionFilter,
+  ForbiddenExceptionFilter,
+  GatewayTimeOutExceptionFilter,
   ValidationExceptionFilter,
-} from './filters';
-
-import { CoreModule } from './core/core.module';
+} from './core/filters';
+import { TimeoutInterceptor } from './core/interceptors';
 import { AuthModule } from './modules/auth/auth.module';
+import { JwtUserAuthGuard } from './modules/auth/guards';
 import { UserModule } from './modules/user/user.module';
 import { WorkspaceModule } from './modules/workspace/workspace.module';
 
@@ -24,24 +26,46 @@ import { WorkspaceModule } from './modules/workspace/workspace.module';
     WorkspaceModule,
   ],
   providers: [
-    { provide: APP_FILTER, useClass: AllExceptionsFilter },
-    { provide: APP_FILTER, useClass: ValidationExceptionFilter },
-    { provide: APP_FILTER, useClass: BadRequestExceptionFilter },
-    { provide: APP_FILTER, useClass: UnauthorizedExceptionFilter },
-    { provide: APP_FILTER, useClass: ForbiddenExceptionFilter },
-    { provide: APP_FILTER, useClass: NotFoundExceptionFilter },
     {
-      // Allowing to do validation through DTO
-      // Since class-validator library default throw BadRequestException, here we use exceptionFactory to throw
-      // their internal exception so that filter can recognize it
-      provide: APP_PIPE,
-      useFactory: () =>
-        new ValidationPipe({
-          exceptionFactory: (errors: ValidationError[]) => {
-            return errors[0];
-          },
-        }),
+      provide: APP_FILTER,
+      useClass: AllExceptionsFilter,
     },
-  ], // Define the application's service
+    {
+      provide: APP_PIPE,
+      useClass: ValidationExceptionFilter,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: BadRequestExceptionFilter,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: UnauthorizedExceptionFilter,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: ForbiddenExceptionFilter,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: NotFoundExceptionFilter,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: GatewayTimeOutExceptionFilter,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useFactory: () => {
+        // TODO: Move this to config
+        const timeoutInMilliseconds = 30000;
+        return new TimeoutInterceptor(timeoutInMilliseconds);
+      },
+    },
+    {
+      provide: APP_GUARD,
+      useClass: JwtUserAuthGuard,
+    },
+  ],
 })
 export class AppModule {}

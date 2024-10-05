@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { InternalServerErrorException } from '../../exceptions/internal-server-error.exception';
+import { InternalServerErrorException } from 'src/core/exceptions';
 
-import { Workspace } from './workspace.schema';
 import { WorkspaceRepository } from './workspace.repository';
+import { Workspace } from './workspace.schema';
 
 @Injectable()
 export class WorkspaceQueryService {

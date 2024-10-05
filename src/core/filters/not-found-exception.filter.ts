@@ -1,4 +1,4 @@
-import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus, Logger, NotFoundException } from '@nestjs/common';
+import { ArgumentsHost, Catch, ExceptionFilter, HttpStatus, Logger, NotFoundException } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
 
 /**
@@ -22,7 +22,7 @@ export class NotFoundExceptionFilter implements ExceptionFilter {
    * @param {ArgumentsHost} host - the arguments host
    * @returns {void}
    */
-  catch(exception: any, host: ArgumentsHost): void {
+  catch(exception: NotFoundException, host: ArgumentsHost): void {
     // Log the exception.
 
     // In certain situations `httpAdapter` might not be available in the
@@ -31,15 +31,18 @@ export class NotFoundExceptionFilter implements ExceptionFilter {
 
     const ctx = host.switchToHttp();
 
-    const httpStatus = exception instanceof HttpException ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
+    const instanceException: NotFoundException = exception instanceof NotFoundException ? exception : new NotFoundException(exception);
+
+    const httpStatus = exception instanceof NotFoundException ? exception.getStatus() : HttpStatus.NOT_FOUND;
 
     const request = ctx.getRequest();
 
     // Construct the response body.
-    const responseBody = {
-      error: exception.code,
-      message: exception.message,
-      description: exception.description,
+    const responseBody: Record<string, unknown> = {
+      code: httpStatus,
+      message: 'Not Found',
+      description: instanceException.message,
+      timestamp: new Date().toISOString(),
       traceId: request.id,
     };
 

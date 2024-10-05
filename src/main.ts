@@ -1,8 +1,8 @@
 // Import external modules
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { ClassSerializerInterceptor, Logger, ValidationPipe } from '@nestjs/common';
-import { NestFactory, Reflector } from '@nestjs/core';
+import { Logger, ValidationPipe } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
 import { ExpressAdapter, NestExpressApplication } from '@nestjs/platform-express';
 
 import * as cluster from 'cluster';
@@ -31,11 +31,14 @@ export async function bootstrap(): Promise<NestExpressApplication> {
     bufferLogs: true,
   });
 
-  // Use the Pino logger for the application
-  app.useLogger(app.get(Pino));
-
   // Use the application container
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
+
+  // Allow all origins
+  app.enableCors();
+
+  // Use the Pino logger for the application
+  app.useLogger(app.get(Pino));
 
   // Get configuration service from the application
   const configService: ConfigService = app.get(ConfigService);
@@ -93,15 +96,6 @@ export async function bootstrap(): Promise<NestExpressApplication> {
 
   // Set up the validation pipe
   app.useGlobalPipes(new ValidationPipe(validationOptionsUtil));
-
-  // Set the global interceptors
-  app.useGlobalInterceptors(
-    // Use the class serializer interceptor to serialize the response objects
-    new ClassSerializerInterceptor(app.get(Reflector)),
-  );
-
-  // Allow all origins
-  app.enableCors();
 
   // Check if Swagger is enabled
   if (swaggerEnabled) {

@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 
-import { DatabaseCollectionNames } from '../../shared/enums/db.enum';
+import { DatabaseCollectionNames } from 'src/shared';
+
 import { UserController } from './user.controller';
 import { UserQueryService } from './user.query.service';
 import { UserRepository } from './user.repository';

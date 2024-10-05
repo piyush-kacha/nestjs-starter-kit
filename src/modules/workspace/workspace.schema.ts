@@ -1,49 +1,40 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { HydratedDocument, Schema as MongooseSchema, Types } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
-import { DatabaseCollectionNames } from '../../shared/enums/db.enum';
-import { Identifier } from '../../shared/types/schema.type';
+import { HydratedDocument } from 'mongoose';
 
-@Schema({
-  timestamps: true,
-  collection: DatabaseCollectionNames.WORKSPACE,
-})
-export class Workspace {
-  @ApiProperty({
-    description: 'The unique identifier of the workspace',
-    example: '507f191e810c19729de860ea',
-  })
-  @Prop({
-    type: MongooseSchema.Types.ObjectId,
-    default: () => new Types.ObjectId(),
-  })
-  _id?: Types.ObjectId;
+import { DatabaseCollectionNames } from 'src/shared';
+import { getDatabaseSchemaOptions } from 'src/core/database/database-schema-options';
+import { EntityDocumentHelper } from 'src/utils';
 
+export type WorkspaceDocument = HydratedDocument<Workspace>;
+
+@Schema(getDatabaseSchemaOptions(DatabaseCollectionNames.WORKSPACE))
+export class Workspace extends EntityDocumentHelper<Workspace> {
   @ApiProperty({
+    type: String,
     description: 'The name of the workspace',
     example: 'My Workspace',
   })
   @Prop({
-    type: MongooseSchema.Types.String,
+    type: String,
     required: true,
   })
   name: string;
 
   @ApiProperty({
-    description: 'Date of creation',
+    type: String,
+    description: 'The description of the workspace',
+    example: 'This is my workspace',
   })
-  @Prop()
-  createdAt?: Date;
-
-  @ApiProperty({
-    description: 'Date of last update',
+  @Prop({
+    type: String,
+    required: false,
+    default: '',
   })
-  @Prop()
-  updatedAt?: Date;
+  description?: string;
 }
 
-export type WorkspaceIdentifier = Identifier | Workspace;
-
-export type WorkspaceDocument = HydratedDocument<Workspace>;
 export const WorkspaceSchema = SchemaFactory.createForClass(Workspace);
+
+WorkspaceSchema.index({ name: 1 }, { unique: true });

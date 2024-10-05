@@ -2,7 +2,7 @@ import { registerAs } from '@nestjs/config';
 
 import { IsBoolean, IsNotEmpty, IsString, MinLength } from 'class-validator';
 
-import { validateConfigUtil } from '../utils';
+import { validateConfigUtil } from 'src/utils';
 
 export type ApiConfig = {
   prefixEnabled: boolean;

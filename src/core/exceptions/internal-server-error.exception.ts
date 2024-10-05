@@ -1,9 +1,8 @@
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { HttpException, HttpStatus } from '@nestjs/common';
 
-// Import internal files & modules
-import { ExceptionConstants } from './exceptions.constants';
-import { IException, IHttpInternalServerErrorExceptionResponse } from './exceptions.interface';
+import { ExceptionConstants } from './constants';
+import { IException, IHttpInternalServerErrorExceptionResponse } from './interfaces';
 
 // Exception class for Internal Server Error
 export class InternalServerErrorException extends HttpException {

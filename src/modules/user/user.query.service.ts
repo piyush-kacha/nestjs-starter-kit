@@ -2,15 +2,11 @@
 // External dependencies
 import { Injectable } from '@nestjs/common';
 
-// Internal dependencies
-import { User, UserDocument } from './user.schema';
+import { InternalServerErrorException } from 'src/core/exceptions';
+import { Identifier } from 'src/shared';
+
 import { UserRepository } from './user.repository';
-
-// Other modules dependencies
-
-// Shared dependencies
-import { Identifier } from '../../shared/types/schema.type';
-import { InternalServerErrorException } from '../../exceptions/internal-server-error.exception';
+import { User, UserDocument } from './user.schema';
 
 @Injectable()
 export class UserQueryService {

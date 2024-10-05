@@ -1,28 +1,33 @@
-import { FilterQuery, Model, ProjectionType, QueryOptions, UpdateQuery } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Injectable } from '@nestjs/common';
 
-import { DatabaseCollectionNames } from '../../shared/enums/db.enum';
+import { FilterQuery, Model, ProjectionType, QueryOptions, UpdateQuery } from 'mongoose';
+
+import { DatabaseCollectionNames } from 'src/shared';
+import { DatabaseAbstractRepository } from 'src/core/database/abstracts';
+
 import { Workspace, WorkspaceDocument } from './workspace.schema';
 
 @Injectable()
-export class WorkspaceRepository {
-  constructor(@InjectModel(DatabaseCollectionNames.WORKSPACE) private workspaceModel: Model<WorkspaceDocument>) {}
-
-  async find(filter: FilterQuery<WorkspaceDocument>, selectOptions?: ProjectionType<WorkspaceDocument>): Promise<Workspace[]> {
-    return this.workspaceModel.find(filter, selectOptions).lean();
+export class WorkspaceRepository extends DatabaseAbstractRepository<WorkspaceDocument> {
+  constructor(@InjectModel(DatabaseCollectionNames.WORKSPACE) private workspaceModel: Model<WorkspaceDocument>) {
+    super(workspaceModel);
   }
 
-  async findOne(filter: FilterQuery<WorkspaceDocument>): Promise<Workspace> {
-    return this.workspaceModel.findOne(filter).lean();
+  async find(filter: FilterQuery<WorkspaceDocument>, selectOptions?: ProjectionType<WorkspaceDocument>): Promise<WorkspaceDocument[]> {
+    return this.workspaceModel.find(filter, selectOptions);
   }
 
-  async create(workspace: Workspace): Promise<Workspace> {
+  async findOne(filter: FilterQuery<WorkspaceDocument>): Promise<WorkspaceDocument> {
+    return this.workspaceModel.findOne(filter);
+  }
+
+  async create(workspace: Workspace): Promise<WorkspaceDocument> {
     return this.workspaceModel.create(workspace);
   }
 
-  async findById(workspaceId: string): Promise<Workspace> {
-    return this.workspaceModel.findById(workspaceId).lean();
+  async findById(workspaceId: string): Promise<WorkspaceDocument> {
+    return this.workspaceModel.findById(workspaceId);
   }
 
   async findOneAndUpdate(
@@ -30,10 +35,10 @@ export class WorkspaceRepository {
     update: UpdateQuery<Workspace>,
     options?: QueryOptions<Workspace>,
   ): Promise<WorkspaceDocument> {
-    return this.workspaceModel.findOneAndUpdate(filter, update, options).lean();
+    return this.workspaceModel.findOneAndUpdate(filter, update, options);
   }
 
-  async findByIdAndDelete(workspaceId: string): Promise<Workspace> {
-    return this.workspaceModel.findByIdAndDelete(workspaceId).lean();
+  async findByIdAndDelete(workspaceId: string): Promise<WorkspaceDocument> {
+    return this.workspaceModel.findByIdAndDelete(workspaceId);
   }
 }

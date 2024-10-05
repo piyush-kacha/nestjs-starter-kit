@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 import { IncomingMessage, ServerResponse } from 'http';
@@ -6,6 +6,8 @@ import { IncomingMessage, ServerResponse } from 'http';
 import { LoggerModule } from 'nestjs-pino';
 
 import { E_APP_ENVIRONMENTS, E_APP_LOG_LEVELS } from 'src/config/app.config';
+
+import { RequestLoggerMiddleware } from '../middlewares';
 
 @Module({
   imports: [
@@ -58,6 +60,7 @@ import { E_APP_ENVIRONMENTS, E_APP_LOG_LEVELS } from 'src/config/app.config';
                   }
                 : null,
           },
+          // forRoutes: ['*'], // Log all requests
         };
       },
     }),
@@ -66,4 +69,9 @@ import { E_APP_ENVIRONMENTS, E_APP_LOG_LEVELS } from 'src/config/app.config';
   providers: [],
   exports: [],
 })
-export class LogModule {}
+export class LogModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    // Middleware configuration
+    consumer.apply(RequestLoggerMiddleware).forRoutes('*');
+  }
+}

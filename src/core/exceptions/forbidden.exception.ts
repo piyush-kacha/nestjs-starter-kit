@@ -6,9 +6,8 @@
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { HttpException, HttpStatus } from '@nestjs/common';
 
-// Import internal modules
-import { ExceptionConstants } from './exceptions.constants';
-import { IException, IHttpForbiddenExceptionResponse } from './exceptions.interface';
+import { ExceptionConstants } from './constants';
+import { IException, IHttpForbiddenExceptionResponse } from './interfaces';
 
 /**
  * A custom exception for forbidden errors.

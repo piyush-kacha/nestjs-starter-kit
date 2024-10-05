@@ -23,17 +23,11 @@ import { HttpStatus, UnprocessableEntityException, ValidationError, ValidationPi
  *  },
  * ]);
  */
-const generateErrors = (errors: ValidationError[]): unknown => {
-  return errors.reduce(
-    (accumulator, currentValue) => ({
-      ...accumulator,
-      [currentValue.property]:
-        (currentValue.children?.length ?? 0) > 0
-          ? generateErrors(currentValue.children ?? [])
-          : Object.values(currentValue.constraints ?? {}).join(', '),
-    }),
-    {},
-  );
+const generateErrors = (errors: ValidationError[]) => {
+  return errors.map((error) => ({
+    property: error.property,
+    errors: (error.children?.length ?? 0) > 0 ? generateErrors(error.children ?? []) : Object.values(error.constraints ?? []),
+  }));
 };
 
 /**
@@ -41,13 +35,20 @@ const generateErrors = (errors: ValidationError[]): unknown => {
  * @description This is the validation options util.
  */
 export const validationOptionsUtil: ValidationPipeOptions = {
-  transform: true,
-  whitelist: true,
-  errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+  transform: true, // transform the incoming value to the type defined in the DTO
+  whitelist: true, // remove any extra properties sent by the client
+  always: true, // always transform the incoming value to the type defined in the DTO
+  forbidNonWhitelisted: false, // don't throw an error if extra properties are sent by the client
+  enableDebugMessages: true, // enable debug messages for the validation pipe
+  transformOptions: {
+    enableImplicitConversion: true, // enable implicit conversion of incoming values
+    enableCircularCheck: true, // enable circular check for incoming values
+  },
+  forbidUnknownValues: false, // throw an error if unknown values are sent by the client
+  errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY, // set the HTTP status code for validation errors
   exceptionFactory: (errors: ValidationError[]) => {
     return new UnprocessableEntityException({
-      status: HttpStatus.UNPROCESSABLE_ENTITY,
-      errors: generateErrors(errors),
+      validationErrors: generateErrors(errors),
     });
   },
 };

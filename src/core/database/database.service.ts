@@ -2,6 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { MongooseModuleOptions, MongooseOptionsFactory } from '@nestjs/mongoose';
 
+import { Connection } from 'mongoose';
+
 @Injectable()
 export class DatabaseService implements MongooseOptionsFactory {
   private readonly logger = new Logger(DatabaseService.name);
@@ -9,10 +11,11 @@ export class DatabaseService implements MongooseOptionsFactory {
   constructor(private readonly configService: ConfigService) {}
 
   createMongooseOptions(): MongooseModuleOptions {
-    this.logger.debug('Creating Mongoose options...');
+    this.logger.error('Creating Mongoose options...');
     const autoPopulate: boolean = this.configService.get<boolean>('database.autoPopulate', {
       infer: true,
     });
+    this.logger.error(`Auto-populate: ${autoPopulate}`);
     return {
       uri: this.configService.get<string>('database.uri', {
         infer: true,
@@ -23,11 +26,10 @@ export class DatabaseService implements MongooseOptionsFactory {
       heartbeatFrequencyMS: this.configService.get<boolean>('database.heartbeatFrequencyMS', {
         infer: true,
       }),
-      connectionFactory(connection) {
+      onConnectionCreate(connection: Connection) {
         if (autoPopulate) {
-          connection.plugin(require('mongoose-autopopulate'));
+          connection.plugin(require('mongoose-autopopulate')); // Enable the mongoose-autopopulate plugin
         }
-        return connection;
       },
     };
   }
