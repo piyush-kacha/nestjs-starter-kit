@@ -2,56 +2,59 @@
 
 This is a starter kit for building a Nest.js application with MongoDB, Express, Clustering, Swagger, Pino, and Exception handling.
 
-
 ## Getting Started
+
 To get started with this project, clone the repository and install the dependencies:
 
-```bash
-git clone https://github.com/piyush-kacha/nestjs-starter-kit.git
-cd nestjs-starter-kit
+``` shell
+git clone https://github.com/piyush-kacha/nestjs-starter-kit.git YOUR_PROJECT_NAME # Replace YOUR_PROJECT_NAME with the name of your project
+cd YOUR_PROJECT_NAME
 npm ci
 ```
 
+Use the copy command to create a copy of the example .env file. Replace `example.env` with the name of your example (`.env` or `.env.local` or `.env.development` or `.env.test`) file:
 
-Use the copy command to create a copy of the example .env file. Replace `example.env` with the name of your example .env file:
-
-```bash
-cp example.env .env
+``` shell
+cp example.env .env # OR .env.local - .env.development - .env.test
 ```
 
 ## Generating an RSA Key Pair for JWT Authentication with OpenSSL
 
-1. Generate a private key: 
+1. Generate a private key:
 
-   ```sh
-   openssl genrsa -out private_key.pem 2048
-   ```
-2. Extract the public key from the private key:
-   ```sh
-    openssl rsa -in private_key.pem -outform PEM -pubout -out public_key.pem
+    ``` shell
+    openssl genrsa -out .keys/private_key.pem 2048
     ```
-    This will create two files in the current directory: private_key.pem (the private key) and public_key.pem (the corresponding public key).
 
-    Note: The key size (2048 bits in this example) can be adjusted to suit your security requirements.
+2. Extract the public key from the private key:
+
+    ``` shell
+    openssl rsa -in .keys/private_key.pem -outform PEM -pubout -out .keys/public_key.pem
+    ```
+
+    This will create two files in the `.keys` directory **(THIS DIRECTORY IS IGNORED)**: `.keys/private_key.pem` (the private key) and `.keys/public_key.pem` (the corresponding public key). **DONT SHARE THE PRIVATE KEY WITH ANYONE.**
+
+    ***NOTE:*** The key size (2048 bits in this example) can be adjusted to suit your security requirements.
 3. Encode the public key in base64 encoding:
-   ```sh
-   openssl base64 -A -in public_key.pem -out public_key_base64.txt
+
+   ```shell
+   openssl base64 -A -in .keys/public_key.pem -out .keys/public_key_base64.txt
    ```
-   Copy the contents of the public_key_base64.txt file and paste it into the public_key_base64.txt file in .env JWT_PUBLIC_KEY variable.
+
+   Copy the contents of the `.keys/public_key_base64.txt` file and paste it into `JWT_PUBLIC_KEY` variable declared on your `.env` file.
 
 4. Encode the private key in base64 encoding:
+
    ```sh
-   openssl base64 -A -in private_key.pem -out private_key_base64.txt
+   openssl base64 -A -in .keys/private_key.pem -out .keys/private_key_base64.txt
    ```
-   Copy the contents of the private_key_base64.txt file and paste it into the private_key_base64.txt file in .env JWT_PRIVATE_KEY variable.
 
-5. Remove the public_key.pem and private_key.pem files.
-
-6. Remove the public_key_base64.txt and private_key_base64.txt files.
-
+    Copy the contents of the `.keys/private_key_base64.txt` file and paste it into `JWT_PUBLJWT_PRIVATE_KEYIC_KEY` variable declared on your `.env` file.
 
 ## Running the Application
+
 To run the application in development mode, use the following command:
+
 ```bash
 npm run start:dev
 ```
@@ -59,11 +62,13 @@ npm run start:dev
 This will start the application in watch mode, so any changes you make to the code will automatically restart the server.
 
 To run the application in production mode, use the following command:
+
 ```bash
 npm run start:prod
 ```
 
-## Features:
+## Features
+
 1. **Modularity**: The project structure follows a modular approach, organizing files into directories based on their functionalities. This makes it easier to locate and maintain code related to specific features or components of the application.
 
 2. **Scalability**: The modular structure allows for easy scalability as the application grows. New modules, controllers, services, and other components can be added without cluttering the main directory.
@@ -86,7 +91,6 @@ npm run start:prod
 
 By leveraging this code structure, you can benefit from the well-organized and maintainable foundation provided by the NestJS starter kit. It provides a solid structure for building scalable and robust applications while incorporating best practices and popular libraries.
 
-
 # Project Structure
 
 ```bash
@@ -98,16 +102,20 @@ nestjs-starter-kit/
 ├── .husky/
 │   ├── commit-msg
 │   └── pre-commit
+├── .keys/
+│   ├── .gitkeep
 ├── src
-│   ├── app.config.ts
 │   ├── app.controller.spec.ts
 │   ├── app.controller.ts
 │   ├── app.module.ts
 │   ├── app.service.ts
 │   ├── config
+│   │   ├── api.config.ts
+│   │   ├── app.config.ts
+│   │   ├── auth.config.ts
 │   │   ├── database.config.ts
-│   │   ├── index.ts
-│   │   └── jwt.config.ts
+│   │   ├── infra.config.ts
+│   │   └── swagger.config.ts
 │   ├── exceptions
 │   │   ├── bad-request.exception.ts
 │   │   ├── exceptions.constants.ts
@@ -121,7 +129,7 @@ nestjs-starter-kit/
 │   │   ├── bad-request-exception.filter.ts
 │   │   ├── forbidden-exception.filter.ts
 │   │   ├── index.ts
-│   │   ├── internal-server-error-exception.filter.ts
+│   │   ├── internal-server-error-exception.filter.tsFilter
 │   │   ├── not-found-exception.filter.ts
 │   │   ├── unauthorized-exception.filter.ts
 │   │   └── validator-exception.filter.ts
@@ -163,11 +171,13 @@ nestjs-starter-kit/
 │       ├── enums
 │       │   ├── db.enum.ts
 │       │   ├── index.ts
-│       │   ├── log-level.enum.ts
-│       │   └── node-env.enum.ts
 │       └── types
 │           ├── index.ts
 │           └── schema.type.ts
+│   └── utils
+│       ├── index.ts
+│       ├── number.util.ts
+│       └── validation-options.util.ts
 ├── test
 │   ├── app.e2e-spec.ts
 │   └── jest-e2e.json
@@ -190,6 +200,7 @@ nestjs-starter-kit/
 ├── package.json
 ├── renovate.json
 ```
+
 This project follows a structured organization to maintain clean, scalable code, promoting best practices for enterprise-level applications.
 
 ### 1. Root Files and Configuration
@@ -201,7 +212,6 @@ This project follows a structured organization to maintain clean, scalable code,
 
 ### 2. Source Code (`src/`)
 
-- **`app.config.ts`**: Centralizes application configuration settings.
 - **`app.controller.ts`**: Defines the root controller for handling incoming requests.
 - **`app.module.ts`**: The main module that aggregates all the feature modules and services.
 - **`app.service.ts`**: Contains the primary business logic for the application.
@@ -209,7 +219,7 @@ This project follows a structured organization to maintain clean, scalable code,
 
 #### Subdirectories within `src/`
 
-- **`config/`**: Stores configuration files (e.g., `database.config.ts`, `jwt.config.ts`) for different aspects of the application.
+- **`config/`**: Stores configuration files (e.g., `database.config.ts`, `auth.config.ts`) for different aspects of the application.
 - **`exceptions/`**: Custom exception classes (e.g., `bad-request.exception.ts`, `unauthorized.exception.ts`) that extend NestJS's built-in exceptions.
 - **`filters/`**: Custom exception filters (e.g., `all-exception.filter.ts`, `not-found-exception.filter.ts`) for handling different types of errors globally.
 - **`modules/`**: Contains feature modules of the application:
@@ -217,8 +227,9 @@ This project follows a structured organization to maintain clean, scalable code,
   - **`user/`**: Manages user-related operations, including controllers, services, repositories, and schemas.
   - **`workspace/`**: Manages workspace-related functionality, with services, repositories, and schemas.
 - **`shared/`**: Contains shared resources and utilities:
-  - **`enums/`**: Defines enumerations (e.g., `db.enum.ts`, `node-env.enum.ts`) used across the application.
+  - **`enums/`**: Defines enumerations (e.g., `db.enum.ts`) used across the application.
   - **`types/`**: Custom TypeScript types (e.g., `schema.type.ts`) used for type safety throughout the codebase.
+- **`utils/`**: Utility functions (e.g., `number.util.ts`, `validation-options.util.ts`) for common operations.
 
 ### 3. Testing (`test/`)
 

@@ -1,18 +1,18 @@
 // Import required modules
 import { APP_FILTER, APP_PIPE } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { LoggerModule } from 'nestjs-pino';
 import { Module, ValidationError, ValidationPipe } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 
-// Import application files
+import * as crypto from 'crypto';
 
-import { AppConfig } from './app.config';
+import { LoggerModule } from 'nestjs-pino';
+
+import { IncomingMessage } from 'http';
+import { ServerResponse } from 'http';
+
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { configuration } from './config/index';
-
-// Import filters
 import {
   AllExceptionsFilter,
   BadRequestExceptionFilter,
@@ -21,6 +21,13 @@ import {
   UnauthorizedExceptionFilter,
   ValidationExceptionFilter,
 } from './filters';
+
+import apiConfig from './config/api.config';
+import appConfig, { E_APP_ENVIRONMENTS, E_APP_LOG_LEVELS } from './config/app.config';
+import authConfig from './config/auth.config';
+import databaseConfig from './config/database.config';
+import infraConfig from './config/infra.config';
+import swaggerConfig from './config/swagger.config';
 import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/user/user.module';
 import { WorkspaceModule } from './modules/workspace/workspace.module';
@@ -32,11 +39,70 @@ import { WorkspaceModule } from './modules/workspace/workspace.module';
     // Configure environment variables
     ConfigModule.forRoot({
       isGlobal: true, // Make the configuration global
-      load: [configuration], // Load the environment variables from the configuration file
+      cache: true, // Enable caching of the configuration
+      envFilePath: ['.env.local', '.env.development', '.env.test', '.env'], // Load the .env file
+      expandVariables: true, // Expand variables in the configuration
+      load: [apiConfig, appConfig, authConfig, databaseConfig, infraConfig, swaggerConfig], // Load the environment variables from the configuration file
+      validationOptions: {
+        // Validate the configuration
+        allowUnknown: true, // Allow unknown properties
+        abortEarly: true, // Abort on the first error
+      },
     }),
 
     // Configure logging
-    LoggerModule.forRoot(AppConfig.getLoggerConfig()), // ! forRootAsync is not working with ConfigService in nestjs-pino
+    LoggerModule.forRootAsync({
+      inject: [ConfigService], // Inject the ConfigService into the factory function
+      // useFactory: async (configService: ConfigService) => AppConfig.getLoggerConfig(),
+      useFactory: async (configService: ConfigService) => {
+        const appEnvironment = configService.get<string>('app.env', {
+          infer: true,
+        });
+        const logLevel = configService.get<string>('app.logLevel', {
+          infer: true,
+        });
+        const clusteringEnabled = configService.get<boolean>('infra.clusteringEnabled', {
+          infer: true,
+        });
+        return {
+          exclude: [], // Exclude specific path from the logs and may not work for e2e testing
+          pinoHttp: {
+            genReqId: () => crypto.randomUUID(), // Generate a random UUID for each incoming request
+            autoLogging: true, // Automatically log HTTP requests and responses
+            base: clusteringEnabled === 'true' ? { pid: process.pid } : {}, // Include the process ID in the logs if clustering is enabled
+            customAttributeKeys: {
+              responseTime: 'timeSpent', // Rename the responseTime attribute to timeSpent
+            },
+            level: logLevel || (appEnvironment === E_APP_ENVIRONMENTS.PRODUCTION ? E_APP_LOG_LEVELS.INFO : E_APP_LOG_LEVELS.TRACE), // Set the log level based on the environment and configuration
+            serializers: {
+              req(request: IncomingMessage) {
+                return {
+                  method: request.method,
+                  url: request.url,
+                  id: request.id,
+                  // Including the headers in the log could be in violation of privacy laws, e.g. GDPR.
+                  // headers: request.headers,
+                };
+              },
+              res(reply: ServerResponse) {
+                return {
+                  statusCode: reply.statusCode,
+                };
+              },
+            },
+            transport:
+              appEnvironment !== E_APP_ENVIRONMENTS.PRODUCTION // Only use Pino-pretty in non-production environments
+                ? {
+                    target: 'pino-pretty',
+                    options: {
+                      translateTime: 'SYS:yyyy-mm-dd HH:MM:ss',
+                    },
+                  }
+                : null,
+          },
+        };
+      },
+    }),
 
     // Configure mongoose
     MongooseModule.forRootAsync({
@@ -44,7 +110,9 @@ import { WorkspaceModule } from './modules/workspace/workspace.module';
       inject: [ConfigService], // Inject the ConfigService into the factory function
       useFactory: async (configService: ConfigService) => ({
         // Get the required configuration settings from the ConfigService
-        uri: configService.get('database.uri'),
+        uri: configService.get<string>('database.uri', {
+          infer: true,
+        }),
       }),
     }),
     // Import other modules

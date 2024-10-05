@@ -1,7 +1,12 @@
-export interface IDatabaseConfig {
+import { registerAs } from '@nestjs/config';
+
+export interface DatabaseConfig {
   uri: string;
 }
 
-export const databaseConfig = (): IDatabaseConfig => ({
-  uri: process.env.MONGODB_URI,
-});
+export default registerAs(
+  'database',
+  (): DatabaseConfig => ({
+    uri: process.env.MONGODB_URI || 'mongodb://localhost:27017/nestjs',
+  }),
+);

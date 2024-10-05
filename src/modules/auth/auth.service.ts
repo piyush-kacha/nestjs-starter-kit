@@ -1,29 +1,29 @@
 // External dependencies
-import * as bcrypt from 'bcryptjs';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 
-// Internal dependencies
-import { JwtUserPayload } from './interfaces/jwt-user-payload.interface';
-import { LoginReqDto, LoginResDto, SignupReqDto, SignupResDto } from './dtos';
+import * as bcrypt from 'bcryptjs';
 
-// Other modules dependencies
-import { User } from '../user/user.schema';
+import { generateOTPCode } from 'src/utils';
+
 import { UserQueryService } from '../user/user.query.service';
+import { User } from '../user/user.schema';
 import { WorkspaceQueryService } from '../workspace/workspace.query-service';
-
-// Shared dependencies
 import { BadRequestException } from '../../exceptions/bad-request.exception';
 import { UnauthorizedException } from '../../exceptions/unauthorized.exception';
 
+import { LoginReqDto, LoginResDto, SignupReqDto, SignupResDto } from './dtos';
+
+import { JwtUserPayload } from './interfaces/jwt-user-payload.interface';
+
 @Injectable()
 export class AuthService {
-  private readonly SALT_ROUNDS = 10;
-
   constructor(
+    private readonly configService: ConfigService,
+    private readonly jwtService: JwtService,
     private readonly userQueryService: UserQueryService,
     private readonly workspaceQueryService: WorkspaceQueryService,
-    private readonly jwtService: JwtService,
   ) {}
 
   async signup(signupReqDto: SignupReqDto): Promise<SignupResDto> {
@@ -40,7 +40,9 @@ export class AuthService {
     const workspace = await this.workspaceQueryService.create(workspacePayload);
 
     // Hash password
-    const saltOrRounds = this.SALT_ROUNDS;
+    const saltOrRounds = this.configService.get<number>('authentication.bcryptSaltRounds', {
+      infer: true,
+    });
     const hashedPassword = await bcrypt.hash(password, saltOrRounds);
 
     const userPayload: User = {
@@ -49,7 +51,7 @@ export class AuthService {
       workspace: workspace._id,
       name,
       verified: true,
-      registerCode: this.generateCode(),
+      registerCode: generateOTPCode(),
       verificationCode: null,
       verificationCodeExpiry: null,
       resetToken: null,
@@ -60,16 +62,6 @@ export class AuthService {
     return {
       message: 'User created successfully',
     };
-  }
-
-  /**
-   * Generates a random six digit OTP
-   * @returns {number} - returns the generated OTP
-   */
-  generateCode(): number {
-    const OTP_MIN = 100000;
-    const OTP_MAX = 999999;
-    return Math.floor(Math.random() * (OTP_MAX - OTP_MIN + 1)) + OTP_MIN;
   }
 
   async login(loginReqDto: LoginReqDto): Promise<LoginResDto> {
