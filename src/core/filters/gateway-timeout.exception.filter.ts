@@ -3,12 +3,28 @@ import { HttpAdapterHost } from '@nestjs/core';
 
 import { GatewayTimeoutException, IHttpGatewayTimeOutExceptionResponse } from 'src/core/exceptions';
 
+/**
+ * @class GatewayTimeOutExceptionFilter
+ * @implements {ExceptionFilter}
+ * @description Exception filter to handle GatewayTimeoutException and format the response.
+ */
 @Catch(GatewayTimeoutException)
 export class GatewayTimeOutExceptionFilter implements ExceptionFilter {
   private readonly logger = new Logger(GatewayTimeoutException.name);
 
+  /**
+   * @constructor
+   * @param {HttpAdapterHost} httpAdapterHost - The HTTP adapter host.
+   */
   constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
 
+  /**
+   * @method catch
+   * @description Handles the GatewayTimeoutException and sends a formatted response.
+   * @param {GatewayTimeoutException} exception - The caught exception.
+   * @param {ArgumentsHost} host - The arguments host.
+   * @returns {void}
+   */
   catch(exception: GatewayTimeoutException, host: ArgumentsHost): void {
     this.logger.debug('exception');
 

@@ -1,6 +1,17 @@
 import { Prop } from '@nestjs/mongoose';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
+/**
+ * Abstract class representing a helper for entity documents.
+ *
+ * @template T - The type of the entity.
+ *
+ * @property {string} [_id] - The unique identifier of the entity.
+ * @property {Date} [createdAt] - Date of creation.
+ * @property {Date} [updatedAt] - Date of last update.
+ *
+ * @param {Partial<T>} [partial] - Partial entity to initialize the helper with.
+ */
 export abstract class EntityDocumentHelper<T = any> {
   @ApiPropertyOptional({
     type: String,

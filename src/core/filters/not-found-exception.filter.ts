@@ -6,6 +6,11 @@ import { HttpAdapterHost } from '@nestjs/core';
  */
 @Catch(NotFoundException)
 export class NotFoundExceptionFilter implements ExceptionFilter {
+  /**
+   * @private
+   * @readonly
+   * @type {${1:*}}
+   */
   private readonly logger = new Logger(NotFoundExceptionFilter.name);
 
   /**

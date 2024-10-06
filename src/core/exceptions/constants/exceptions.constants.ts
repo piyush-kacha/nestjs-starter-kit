@@ -1,5 +1,53 @@
 /**
- * This class defines constants for HTTP error codes.
+ * A class containing constants for various HTTP error codes.
+ *
+ * @class ExceptionConstants
+ *
+ * @property {Object} BadRequestCodes - Constants for bad request HTTP error codes.
+ * @property {number} BadRequestCodes.MISSING_REQUIRED_PARAMETER - Required parameter is missing from request.
+ * @property {number} BadRequestCodes.INVALID_PARAMETER_VALUE - Parameter value is invalid.
+ * @property {number} BadRequestCodes.UNSUPPORTED_PARAMETER - Request contains unsupported parameter.
+ * @property {number} BadRequestCodes.INVALID_CONTENT_TYPE - Content type of request is invalid.
+ * @property {number} BadRequestCodes.INVALID_REQUEST_BODY - Request body is invalid.
+ * @property {number} BadRequestCodes.RESOURCE_ALREADY_EXISTS - Resource already exists.
+ * @property {number} BadRequestCodes.RESOURCE_NOT_FOUND - Resource not found.
+ * @property {number} BadRequestCodes.REQUEST_TOO_LARGE - Request is too large.
+ * @property {number} BadRequestCodes.REQUEST_ENTITY_TOO_LARGE - Request entity is too large.
+ * @property {number} BadRequestCodes.REQUEST_URI_TOO_LONG - Request URI is too long.
+ * @property {number} BadRequestCodes.UNSUPPORTED_MEDIA_TYPE - Request contains unsupported media type.
+ * @property {number} BadRequestCodes.METHOD_NOT_ALLOWED - Request method is not allowed.
+ * @property {number} BadRequestCodes.HTTP_REQUEST_TIMEOUT - Request has timed out.
+ * @property {number} BadRequestCodes.VALIDATION_ERROR - Request validation error.
+ * @property {number} BadRequestCodes.UNEXPECTED_ERROR - Unexpected error occurred.
+ * @property {number} BadRequestCodes.INVALID_INPUT - Invalid input.
+ *
+ * @property {Object} UnauthorizedCodes - Constants for unauthorized HTTP error codes.
+ * @property {number} UnauthorizedCodes.UNAUTHORIZED_ACCESS - Unauthorized access to resource.
+ * @property {number} UnauthorizedCodes.INVALID_CREDENTIALS - Invalid credentials provided.
+ * @property {number} UnauthorizedCodes.JSON_WEB_TOKEN_ERROR - JSON web token error.
+ * @property {number} UnauthorizedCodes.AUTHENTICATION_FAILED - Authentication failed.
+ * @property {number} UnauthorizedCodes.ACCESS_TOKEN_EXPIRED - Access token has expired.
+ * @property {number} UnauthorizedCodes.TOKEN_EXPIRED_ERROR - Token has expired error.
+ * @property {number} UnauthorizedCodes.UNEXPECTED_ERROR - Unexpected error occurred.
+ * @property {number} UnauthorizedCodes.RESOURCE_NOT_FOUND - Resource not found.
+ * @property {number} UnauthorizedCodes.USER_NOT_VERIFIED - User not verified.
+ * @property {number} UnauthorizedCodes.REQUIRED_RE_AUTHENTICATION - Required re-authentication.
+ * @property {number} UnauthorizedCodes.INVALID_RESET_PASSWORD_TOKEN - Invalid reset password token.
+ *
+ * @property {Object} InternalServerErrorCodes - Constants for internal server error HTTP error codes.
+ * @property {number} InternalServerErrorCodes.INTERNAL_SERVER_ERROR - Internal server error.
+ * @property {number} InternalServerErrorCodes.DATABASE_ERROR - Database error.
+ * @property {number} InternalServerErrorCodes.NETWORK_ERROR - Network error.
+ * @property {number} InternalServerErrorCodes.THIRD_PARTY_SERVICE_ERROR - Third party service error.
+ * @property {number} InternalServerErrorCodes.SERVER_OVERLOAD - Server is overloaded.
+ * @property {number} InternalServerErrorCodes.UNEXPECTED_ERROR - Unexpected error occurred.
+ *
+ * @property {Object} ForbiddenCodes - Constants for forbidden HTTP error codes.
+ * @property {number} ForbiddenCodes.FORBIDDEN - Access to resource is forbidden.
+ * @property {number} ForbiddenCodes.MISSING_PERMISSIONS - User does not have the required permissions to access the resource.
+ * @property {number} ForbiddenCodes.EXCEEDED_RATE_LIMIT - User has exceeded the rate limit for accessing the resource.
+ * @property {number} ForbiddenCodes.RESOURCE_NOT_FOUND - The requested resource could not be found.
+ * @property {number} ForbiddenCodes.TEMPORARILY_UNAVAILABLE - The requested resource is temporarily unavailable.
  */
 export class ExceptionConstants {
   /**

@@ -31,6 +31,19 @@ class EnvironmentVariablesValidator {
   JWT_EXPIRATION_TIME: string;
 }
 
+/**
+ * Registers the authentication configuration using the `registerAs` function.
+ *
+ * This configuration includes:
+ * - `bcryptSaltRounds`: The number of salt rounds to use for bcrypt hashing, parsed from the environment variable `BCRYPT_SALT_ROUNDS`.
+ * - `jwtPrivateKey`: The private key for JWT, decoded from base64 and converted to a UTF-8 string from the environment variable `JWT_PRIVATE_KEY`.
+ * - `jwtPublicKey`: The public key for JWT, decoded from base64 and converted to a UTF-8 string from the environment variable `JWT_PUBLIC_KEY`.
+ * - `jwtExpiresIn`: The expiration time for JWT tokens, taken from the environment variable `JWT_EXPIRATION_TIME` or defaulting to '1h'.
+ *
+ * Before returning the configuration, it validates the environment variables using `validateConfigUtil` and `EnvironmentVariablesValidator`.
+ *
+ * @returns {AuthenticationConfig} The authentication configuration object.
+ */
 export default registerAs<AuthenticationConfig>('authentication', (): AuthenticationConfig => {
   validateConfigUtil(process.env, EnvironmentVariablesValidator);
   return {

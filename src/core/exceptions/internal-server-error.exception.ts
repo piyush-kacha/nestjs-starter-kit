@@ -5,7 +5,14 @@ import { ExceptionConstants } from './constants';
 import { IException, IHttpInternalServerErrorExceptionResponse } from './interfaces';
 
 // Exception class for Internal Server Error
+/**
+ * Represents an internal server error exception.
+ * Extends the HttpException class.
+ */
 export class InternalServerErrorException extends HttpException {
+  /**
+   * A unique code identifying the error.
+   */
   @ApiProperty({
     enum: ExceptionConstants.InternalServerErrorCodes,
     description: 'A unique code identifying the error.',
@@ -13,15 +20,24 @@ export class InternalServerErrorException extends HttpException {
   })
   code: number; // Internal status code
 
+  /**
+   * Error object causing the exception.
+   */
   @ApiHideProperty()
   cause: Error; // Error object causing the exception
 
+  /**
+   * Message for the exception.
+   */
   @ApiProperty({
     description: 'Message for the exception',
     example: 'An unexpected error occurred while processing your request.',
   })
   message: string; // Message for the exception
 
+  /**
+   * A description of the error message.
+   */
   @ApiProperty({
     description: 'A description of the error message.',
     example:
@@ -29,6 +45,9 @@ export class InternalServerErrorException extends HttpException {
   })
   description: string; // Description of the exception
 
+  /**
+   * Timestamp of the exception.
+   */
   @ApiProperty({
     description: 'Timestamp of the exception',
     format: 'date-time',
@@ -36,6 +55,9 @@ export class InternalServerErrorException extends HttpException {
   })
   timestamp: string; // Timestamp of the exception
 
+  /**
+   * Trace ID of the request.
+   */
   @ApiProperty({
     description: 'Trace ID of the request',
     example: '65b5f773-df95-4ce5-a917-62ee832fcdd0',
@@ -86,9 +108,9 @@ export class InternalServerErrorException extends HttpException {
   };
 
   /**
-   * Returns a new instance of InternalServerErrorException with a standard error message and code
-   * @param error Error object causing the exception
-   * @returns A new instance of InternalServerErrorException
+   * Returns a new instance of InternalServerErrorException with a standard error message and code.
+   * @param error Error object causing the exception.
+   * @returns A new instance of InternalServerErrorException.
    */
   static INTERNAL_SERVER_ERROR = (error: any) => {
     return new InternalServerErrorException({
@@ -99,9 +121,9 @@ export class InternalServerErrorException extends HttpException {
   };
 
   /**
-   * Returns a new instance of InternalServerErrorException with a custom error message and code
-   * @param error Error object causing the exception
-   * @returns A new instance of InternalServerErrorException
+   * Returns a new instance of InternalServerErrorException with a custom error message and code.
+   * @param error Error object causing the exception.
+   * @returns A new instance of InternalServerErrorException.
    */
   static UNEXPECTED_ERROR = (error: any) => {
     return new InternalServerErrorException({

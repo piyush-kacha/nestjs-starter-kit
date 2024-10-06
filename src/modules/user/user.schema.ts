@@ -11,6 +11,23 @@ import { Workspace } from '../workspace/workspace.schema';
 
 export type UserDocument = HydratedDocument<User>;
 
+/**
+ * Represents a User entity in the database.
+ *
+ * @remarks
+ * This class extends `EntityDocumentHelper<User>` and is decorated with the `@Schema` decorator
+ * to define the schema options for the User collection.
+ *
+ * @property {string} email - The unique identifier of the user.
+ * @property {string} [password] - The hashed password of the user.
+ * @property {Workspace} workspace - The unique identifier of the workspace that the user belongs to.
+ * @property {string} [name] - The full name of the user.
+ * @property {boolean} verified - Indicates whether the user has verified their email address.
+ * @property {number} [verificationCode] - A 6-digit number sent to the user's email address to verify their email address.
+ * @property {Date} [verificationCodeExpiry] - The date and time when the verification code expires.
+ * @property {string} [resetToken] - Token used for resetting the user's password.
+ * @property {number} [registerCode] - Code used when the user is going to reset or change their password, causing all active sessions to be logged out.
+ */
 @Schema(getDatabaseSchemaOptions(DatabaseCollectionNames.USER, ['password']))
 export class User extends EntityDocumentHelper<User> {
   // email is the unique identifier of the user

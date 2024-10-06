@@ -4,6 +4,33 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import { ExceptionConstants } from './constants';
 import { IException, IHttpGatewayTimeOutExceptionResponse } from './interfaces';
 
+/**
+ * Represents a Gateway Timeout Exception.
+ *
+ * @class GatewayTimeoutException
+ * @extends {HttpException}
+ *
+ * @property {number} code - A unique code identifying the error.
+ * @property {Error} cause - Error object causing the exception.
+ * @property {string} message - Message for the exception.
+ * @property {string} [description] - A description of the error message.
+ * @property {string} timestamp - Timestamp of the exception.
+ * @property {string} traceId - Trace ID of the request.
+ * @property {string} path - Requested path.
+ *
+ * @constructor
+ * @param {IException} exception - The exception object containing error details.
+ *
+ * @method setTraceId
+ * @param {string} traceId - Sets the trace ID of the request.
+ *
+ * @method setPath
+ * @param {string} path - Sets the requested path.
+ *
+ * @method generateHttpResponseBody
+ * @param {string} [message] - Optional custom message for the response body.
+ * @returns {IHttpGatewayTimeOutExceptionResponse} - The HTTP response body for the exception.
+ */
 export class GatewayTimeoutException extends HttpException {
   @ApiProperty({
     enum: ExceptionConstants.BadRequestCodes,

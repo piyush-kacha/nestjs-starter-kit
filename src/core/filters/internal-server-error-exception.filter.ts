@@ -9,6 +9,11 @@ import { IHttpInternalServerErrorExceptionResponse, InternalServerErrorException
  */
 @Catch(InternalServerErrorException)
 export class InternalServerErrorExceptionFilter implements ExceptionFilter {
+  /**
+   * @private
+   * @readonly
+   * @type {${1:*}}
+   */
   private readonly logger = new Logger(InternalServerErrorException.name);
 
   /**

@@ -44,6 +44,20 @@ class EnvironmentVariablesValidator {
   SWAGGER_YAML_PATH: string;
 }
 
+/**
+ * Registers the Swagger configuration for the application.
+ *
+ * @returns {SwaggerConfig} The Swagger configuration object.
+ *
+ * The configuration includes:
+ * - `swaggerEnabled`: A boolean indicating if Swagger is enabled (default: true).
+ * - `swaggerTitle`: The title of the Swagger documentation (default: 'NestJS Starter API').
+ * - `swaggerDescription`: The description of the Swagger documentation (default: 'The API for the NestJS Starter project').
+ * - `swaggerVersion`: The version of the Swagger documentation (default: '1.0').
+ * - `swaggerPath`: The path to access the Swagger UI (default: 'docs').
+ * - `swaggerJsonPath`: The path to access the Swagger JSON documentation (default: 'docs/json').
+ * - `swaggerYamlPath`: The path to access the Swagger YAML documentation (default: 'docs/yaml').
+ */
 export default registerAs<SwaggerConfig>('swagger', (): SwaggerConfig => {
   validateConfigUtil(process.env, EnvironmentVariablesValidator);
   return {

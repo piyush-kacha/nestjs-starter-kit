@@ -9,6 +9,72 @@ import { E_APP_ENVIRONMENTS, E_APP_LOG_LEVELS } from 'src/config/app.config';
 
 import { RequestLoggerMiddleware } from '../middlewares';
 
+/**
+ * LogModule is a NestJS module that configures the logging mechanism for the application.
+ * It uses the LoggerModule with asynchronous configuration to set up logging based on the application's environment and configuration settings.
+ *
+ * @module LogModule
+ *
+ * @description
+ * This module imports the LoggerModule and configures it using the `forRootAsync` method.
+ * It injects the `ConfigService` to retrieve configuration values for the logging setup.
+ *
+ * @property {Array} imports - An array of modules to import.
+ * @property {Array} controllers - An array of controllers to include in the module.
+ * @property {Array} providers - An array of providers to include in the module.
+ * @property {Array} exports - An array of providers to export from the module.
+ *
+ * @method configure
+ * @description
+ * Configures middleware for the module. Applies the `RequestLoggerMiddleware` to all routes.
+ *
+ * @param {MiddlewareConsumer} consumer - The middleware consumer to configure.
+ *
+ * @example
+ * // Example configuration for LoggerModule
+ * LoggerModule.forRootAsync({
+ *   inject: [ConfigService],
+ *   useFactory: async (configService: ConfigService) => {
+ *     const appEnvironment = configService.get<string>('app.env', { infer: true });
+ *     const logLevel = configService.get<string>('app.logLevel', { infer: true });
+ *     const clusteringEnabled = configService.get<boolean>('infra.clusteringEnabled', { infer: true });
+ *     return {
+ *       exclude: [],
+ *       pinoHttp: {
+ *         genReqId: () => crypto.randomUUID(),
+ *         autoLogging: true,
+ *         base: clusteringEnabled === 'true' ? { pid: process.pid } : {},
+ *         customAttributeKeys: {
+ *           responseTime: 'timeSpent',
+ *         },
+ *         level: logLevel || (appEnvironment === E_APP_ENVIRONMENTS.PRODUCTION ? E_APP_LOG_LEVELS.INFO : E_APP_LOG_LEVELS.TRACE),
+ *         serializers: {
+ *           req(request: IncomingMessage) {
+ *             return {
+ *               method: request.method,
+ *               url: request.url,
+ *               id: request.id,
+ *             };
+ *           },
+ *           res(reply: ServerResponse) {
+ *             return {
+ *               statusCode: reply.statusCode,
+ *             };
+ *           },
+ *         },
+ *         transport: appEnvironment !== E_APP_ENVIRONMENTS.PRODUCTION
+ *           ? {
+ *               target: 'pino-pretty',
+ *               options: {
+ *                 translateTime: 'SYS:yyyy-mm-dd HH:MM:ss',
+ *               },
+ *             }
+ *           : null,
+ *       },
+ *     };
+ *   },
+ * });
+ */
 @Module({
   imports: [
     // Configure logging

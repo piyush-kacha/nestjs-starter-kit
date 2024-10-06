@@ -4,12 +4,22 @@ import { HttpAdapterHost } from '@nestjs/core';
 import { ForbiddenException, IHttpForbiddenExceptionResponse } from '../exceptions';
 
 /**
- * Exception filter to handle unauthorized exceptions
+ * A filter to handle ForbiddenException in a NestJS application.
+ *
+ * @class
+ * @implements {ExceptionFilter}
+ * @decorator {Catch(ForbiddenException)}
  */
 @Catch(ForbiddenException)
 export class ForbiddenExceptionFilter implements ExceptionFilter {
-  private readonly logger = new Logger(ForbiddenExceptionFilter.name);
+  private readonly logger: Logger = new Logger(ForbiddenExceptionFilter.name);
 
+  /**
+   * Creates an instance of ForbiddenExceptionFilter.
+   *
+   * @constructor
+   * @param {HttpAdapterHost} httpAdapterHost
+   */
   constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
 
   /**

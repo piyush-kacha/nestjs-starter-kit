@@ -31,6 +31,16 @@ class EnvironmentVariablesValidator {
   MONGODB_HEARTBEAT_FREQUENCY_MS: number;
 }
 
+/**
+ * Registers the database configuration using the `registerAs` function.
+ * Validates the environment variables using `validateConfigUtil` and `EnvironmentVariablesValidator`.
+ *
+ * @returns {DatabaseConfig} The database configuration object.
+ * @property {string} uri - The MongoDB URI from the environment variable `MONGODB_URI`.
+ * @property {boolean} autoCreate - Determines if auto creation is enabled, based on the environment variable `MONGODB_AUTO_CREATE`.
+ * @property {boolean} autoPopulate - Determines if auto population is enabled, based on the environment variable `MONGODB_AUTO_POPULATE`.
+ * @property {number} heartbeatFrequencyMS - The heartbeat frequency in milliseconds, based on the environment variable `MONGODB_HEARTBEAT_FREQUENCY_MS` or defaults to 10000.
+ */
 export default registerAs<DatabaseConfig>('database', (): DatabaseConfig => {
   validateConfigUtil(process.env, EnvironmentVariablesValidator);
 

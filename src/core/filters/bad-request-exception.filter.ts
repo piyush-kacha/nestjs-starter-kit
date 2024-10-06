@@ -8,7 +8,7 @@ import { BadRequestException, IHttpBadRequestExceptionResponse } from '../except
  */
 @Catch(BadRequestException)
 export class BadRequestExceptionFilter implements ExceptionFilter {
-  private readonly logger = new Logger(BadRequestException.name);
+  private readonly logger: Logger = new Logger(BadRequestExceptionFilter.name);
 
   /**
    * Constructs a new instance of `BadRequestExceptionFilter`.
@@ -23,7 +23,7 @@ export class BadRequestExceptionFilter implements ExceptionFilter {
    */
   catch(exception: BadRequestException, host: ArgumentsHost): void {
     // Logs the exception details at the verbose level.
-    this.logger.verbose(exception);
+    this.logger.verbose(`BadRequestException: ${exception.message}`);
 
     // In certain situations `httpAdapter` might not be available in the constructor method,
     // thus we should resolve it here.

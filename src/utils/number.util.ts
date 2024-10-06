@@ -1,21 +1,26 @@
 /**
- * Generates a random six digit OTP
- * @param {number} min - the minimum value of the OTP (default is 100000)
- * @param {number} max - the maximum value of the OTP (default is 999999)
- * @returns {number} - returns the generated OTP
- * @throws {Error} - throws an error if the minimum value is greater than the maximum value
- * @throws {Error} - throws an error if the minimum or maximum values are negative
- * @throws {Error} - throws an error if the minimum or maximum values are not six digits long
- * @throws {Error} - throws an error if the minimum and maximum values are the same
- * @throws {Error} - throws an error if the minimum or maximum values are greater than 999999
- * @throws {Error} - throws an error if the minimum or maximum values are less than 100000
- * @throws {Error} - throws an error if the minimum or maximum values are not numbers
+ * Generates a random OTP code within a specified range.
+ *
+ * If any of the parameters are not provided, they will be defaulted to 100000 and 999999.
+ *
+ * The generated OTP code will be a whole number between the minimum and maximum values (inclusive).
+ *
+ * @param {number} [min=100000] - The minimum value of the OTP range.
+ * @param {number} [max=999999] - The maximum value of the OTP range.
+ * @return {number} The randomly generated OTP code.
+ * @throws {Error} If the minimum value is greater than the maximum value.
+ * @throws {Error} If the minimum or maximum values are negative.
+ * @throws {Error} If the minimum or maximum values are not six digits long.
+ * @throws {Error} If the minimum and maximum values are the same.
+ * @throws {Error} If the minimum or maximum values are greater than 999999.
+ * @throws {Error} If the minimum or maximum values are less than 100000.
+ * @throws {Error} If the minimum or maximum values are not numbers.
+ * @throws {Error} If the minimum or maximum values are not whole numbers.
  */
 export const generateOTPCode = (min?: number, max?: number): number => {
   min = min || 100000;
   max = max || 999999;
 
-  // Validate the input values
   if (min > max) {
     throw new Error('Minimum value cannot be greater than maximum value');
   } else if (min < 0 || max < 0) {

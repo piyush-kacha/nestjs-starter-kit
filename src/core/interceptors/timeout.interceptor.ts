@@ -5,6 +5,22 @@ import { catchError, timeout } from 'rxjs/operators';
 
 import { ExceptionConstants, GatewayTimeoutException } from 'src/core/exceptions';
 
+/**
+ * TimeoutInterceptor is a NestJS interceptor that applies a timeout to the request handling process.
+ * If the request takes longer than the specified time, it throws a GatewayTimeoutException.
+ *
+ * @class
+ * @implements {NestInterceptor}
+ *
+ * @constructor
+ * @param {number} millisec - The timeout duration in milliseconds.
+ *
+ * @method
+ * @name intercept
+ * @param {ExecutionContext} context - The execution context of the request.
+ * @param {CallHandler} next - The next handler in the request pipeline.
+ * @returns {Observable<any>} - An observable that either completes within the specified timeout or throws a GatewayTimeoutException.
+ */
 @Injectable()
 export class TimeoutInterceptor implements NestInterceptor {
   constructor(private readonly millisec: number) {}

@@ -4,12 +4,22 @@ import { HttpAdapterHost } from '@nestjs/core';
 import { IHttpUnauthorizedExceptionResponse, UnauthorizedException } from '../exceptions';
 
 /**
- * Exception filter to handle unauthorized exceptions
+ * A filter to handle unauthorized exceptions.
+ *
+ * @class
+ * @implements {ExceptionFilter}
+ * @decorator {Catch(UnauthorizedException)}
  */
 @Catch(UnauthorizedException)
 export class UnauthorizedExceptionFilter implements ExceptionFilter {
   private readonly logger = new Logger(UnauthorizedExceptionFilter.name);
 
+  /**
+   * Creates an instance of UnauthorizedExceptionFilter.
+   *
+   * @constructor
+   * @param {HttpAdapterHost} httpAdapterHost
+   */
   constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
 
   /**

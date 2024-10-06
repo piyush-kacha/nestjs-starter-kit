@@ -1,4 +1,3 @@
-// Import external modules
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { Logger, ValidationPipe } from '@nestjs/common';
@@ -24,7 +23,32 @@ const logger: Logger = new Logger('Application Bootstrap');
 // Define a variable to store the clustering status
 let clusteringEnabled: boolean = process.env.CLUSTERING && process.env.CLUSTERING === 'true' ? true : false;
 
-// Define the main function
+/**
+ * Bootstrap the NestJS application.
+ *
+ * This function initializes and configures the NestJS application with various settings
+ * such as CORS, logging, configuration service, global prefix, validation pipes, and Swagger documentation.
+ * It also starts the application on the specified host and port.
+ *
+ * @returns {Promise<NestExpressApplication>} The initialized NestJS application instance.
+ *
+ * @remarks
+ * - The application uses the Pino logger.
+ * - Configuration values are retrieved from the ConfigService.
+ * - CORS is enabled for all origins.
+ * - The application can be configured to use a global prefix for all routes.
+ * - Swagger documentation can be enabled and configured.
+ * - Shutdown hooks are enabled for environments other than TEST.
+ *
+ * @example
+ * ```typescript
+ * async function startApp() {
+ *   const app = await bootstrap();
+ *   // Additional setup or configuration can be done here
+ * }
+ * startApp();
+ * ```
+ */
 export async function bootstrap(): Promise<NestExpressApplication> {
   // Create the NestJS application instance
   const app: NestExpressApplication = await NestFactory.create<NestExpressApplication>(AppModule, new ExpressAdapter(), {

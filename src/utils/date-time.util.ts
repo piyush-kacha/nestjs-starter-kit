@@ -1,3 +1,16 @@
+/**
+ * Converts a time string to milliseconds.
+ *
+ * The time string should end with a single character representing the time unit:
+ * - 'd' for days
+ * - 'h' for hours
+ * - 'm' for minutes
+ * - 's' for seconds
+ *
+ * @param {string} time - The time string to convert.
+ * @returns {number} The equivalent time in milliseconds.
+ * @throws {Error} If the time format is invalid.
+ */
 export function convertToMilliseconds(time: string): number {
   const timeUnit = time.slice(-1); // Obtiene el último carácter (d, h, m, s)
   const timeValue = parseInt(time.slice(0, -1)); // Obtiene el valor numérico

@@ -1,51 +1,62 @@
-import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus, Logger } from '@nestjs/common';
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus, Logger, UnprocessableEntityException } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
 
+import { AllException, ExceptionConstants } from '../exceptions';
+
 /**
- * Catches all exceptions thrown by the application and sends an appropriate HTTP response.
+ * A filter to catch all exceptions and format the response.
  */
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
   private readonly logger = new Logger(AllExceptionsFilter.name);
 
-  /**
-   * Creates an instance of `AllExceptionsFilter`.
-   *
-   * @param {HttpAdapterHost} httpAdapterHost - the HTTP adapter host
-   */
   constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
 
   /**
-   * Catches an exception and sends an appropriate HTTP response.
-   *
-   * @param {*} exception - the exception to catch
-   * @param {ArgumentsHost} host - the arguments host
-   * @returns {void}
+   * Method to handle caught exceptions.
+   * @param exception - The exception that was thrown.
+   * @param host - The arguments host.
    */
-  catch(exception: any, host: ArgumentsHost): void {
-    // Log the exception.
+  catch(exception: unknown, host: ArgumentsHost): void {
     this.logger.error(exception);
 
-    // In certain situations `httpAdapter` might not be available in the
-    // constructor method, thus we should resolve it here.
     const { httpAdapter } = this.httpAdapterHost;
-
     const ctx = host.switchToHttp();
 
-    const httpStatus = exception instanceof HttpException ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
+    if (exception instanceof UnprocessableEntityException) {
+      const unprocessableException = exception as UnprocessableEntityException;
+      const httpStatus = unprocessableException.getStatus();
+      const response = unprocessableException.getResponse();
 
-    const request = ctx.getRequest();
+      const exc = new AllException({
+        code: ExceptionConstants.BadRequestCodes.VALIDATION_ERROR,
+        message: unprocessableException.name,
+        description: unprocessableException.message,
+        cause: unprocessableException,
+      });
+      exc.setTraceId(ctx.getRequest().id);
+      exc.setError(response && response['validationErrors'] ? response['validationErrors'] : response);
 
-    // Construct the response body.
-    const responseBody = {
-      error: exception.code,
-      message: exception.message,
-      description: exception.description,
-      timestamp: new Date().toISOString(),
-      traceId: request.id,
-    };
+      const responseBody = exc.generateHttpResponseBody();
 
-    // Send the HTTP response.
-    httpAdapter.reply(ctx.getResponse(), responseBody, httpStatus);
+      httpAdapter.reply(ctx.getResponse(), responseBody, httpStatus);
+    } else {
+      // Determine the HTTP status code
+      const httpStatus = exception instanceof HttpException ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
+
+      const request = ctx.getRequest();
+
+      // Construct the response body
+      const responseBody = {
+        error: (exception as any).code || 'INTERNAL_SERVER_ERROR',
+        message: (exception as any).message || 'An unexpected error occurred',
+        description: (exception as any).description || null,
+        timestamp: new Date().toISOString(),
+        traceId: request.id || null,
+      };
+
+      // Send the response
+      httpAdapter.reply(ctx.getResponse(), responseBody, httpStatus);
+    }
   }
 }

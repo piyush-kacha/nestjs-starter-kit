@@ -12,6 +12,46 @@ import { IException, IHttpForbiddenExceptionResponse } from './interfaces';
 /**
  * A custom exception for forbidden errors.
  */
+/**
+ * Represents a ForbiddenException which extends the HttpException class.
+ * This exception is thrown when access to a resource is forbidden.
+ *
+ * @class
+ * @extends HttpException
+ *
+ * @property {number} code - The error code.
+ * @property {Error} cause - The error that caused this exception.
+ * @property {string} message - The error message.
+ * @property {string} description - The detailed description of the error.
+ * @property {string} timestamp - Timestamp of the exception.
+ * @property {string} traceId - Trace ID of the request.
+ *
+ * @constructor
+ * @param {IException} exception - An object containing the exception details.
+ * @param {string} exception.message - A string representing the error message.
+ * @param {Error} exception.cause - An object representing the cause of the error.
+ * @param {string} exception.description - A string describing the error in detail.
+ * @param {number} exception.code - A number representing internal status code which is helpful in future for frontend.
+ *
+ * @method setTraceId
+ * @param {string} traceId - A string representing the Trace ID.
+ * @description Sets the Trace ID of the ForbiddenException instance.
+ *
+ * @method generateHttpResponseBody
+ * @param {string} [message] - A string representing the message to include in the response body.
+ * @returns {IHttpForbiddenExceptionResponse} An object representing the HTTP response body.
+ * @description Generates an HTTP response body representing the ForbiddenException instance.
+ *
+ * @method static FORBIDDEN
+ * @param {string} [msg] - An optional error message.
+ * @returns {ForbiddenException} An instance of the ForbiddenException class.
+ * @description A static method to generate an exception forbidden error.
+ *
+ * @method static MISSING_PERMISSIONS
+ * @param {string} [msg] - An optional error message.
+ * @returns {ForbiddenException} An instance of the ForbiddenException class.
+ * @description A static method to generate an exception missing permissions error.
+ */
 export class ForbiddenException extends HttpException {
   /** The error code. */
   @ApiProperty({

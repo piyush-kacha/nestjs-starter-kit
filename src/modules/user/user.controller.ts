@@ -9,6 +9,22 @@ import { GetUser } from '../auth/decorators';
 import { GetProfileResDto } from './dtos';
 import { UserDocument } from './user.schema';
 
+/**
+ * Controller for handling user-related operations.
+ *
+ * @class UserController
+ * @description This controller provides endpoints for user operations such as retrieving the user's profile.
+ *
+ * @method getFullAccess
+ * @description Retrieves the full profile of the authenticated user.
+ * @param {UserDocument} user - The authenticated user's document.
+ * @returns {Promise<GetProfileResDto>} The user's profile data wrapped in a response DTO.
+ *
+ * @example
+ * // Example usage:
+ * // GET /user/me
+ * // Response: { message: 'Profile retrieved successfully', user: { ... } }
+ */
 @ApiBearerAuth()
 @ApiErrorResponses()
 @ApiTags('User')

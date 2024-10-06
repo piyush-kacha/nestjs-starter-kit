@@ -6,12 +6,22 @@ import { ValidationError } from 'class-validator';
 import { BadRequestException } from '../exceptions/bad-request.exception';
 
 /**
- * An exception filter to handle validation errors thrown by class-validator.
+ * A filter to handle validation exceptions thrown by the application.
+ *
+ * @class
+ * @implements {ExceptionFilter}
+ * @decorator {Catch(ValidationError)}
  */
 @Catch(ValidationError)
 export class ValidationExceptionFilter implements ExceptionFilter {
   private readonly logger = new Logger(ValidationExceptionFilter.name);
 
+  /**
+   * Creates an instance of ValidationExceptionFilter.
+   *
+   * @constructor
+   * @param {HttpAdapterHost} httpAdapterHost
+   */
   constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
 
   /**

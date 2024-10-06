@@ -9,7 +9,14 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import { ExceptionConstants } from './constants';
 import { IException, IHttpAllExceptionResponse } from './interfaces';
 
+/**
+ * Represents a custom exception that extends the HttpException class.
+ * This class is used to handle all types of exceptions in a standardized way.
+ */
 export class AllException extends HttpException {
+  /**
+   * A unique code identifying the error.
+   */
   @ApiProperty({
     enum: ExceptionConstants.InternalServerErrorCodes,
     description: 'A unique code identifying the error.',
@@ -17,24 +24,36 @@ export class AllException extends HttpException {
   })
   code: number; // Internal status code
 
+  /**
+   * Message for the exception.
+   */
   @ApiProperty({
     description: 'Message for the exception',
     example: 'Internal Server Error',
   })
   message: string; // Message for the exception
 
+  /**
+   * A description of the error message.
+   */
   @ApiProperty({
     description: 'A description of the error message.',
     example: 'An unexpected error occurred',
   })
   description: string; // Description of the exception
 
+  /**
+   * The cause of the exception.
+   */
   @ApiPropertyOptional({
     description: 'The cause of the exception',
     example: {},
   })
   error?: unknown; // Error object
 
+  /**
+   * Timestamp of the exception.
+   */
   @ApiProperty({
     description: 'Timestamp of the exception',
     format: 'date-time',
@@ -42,6 +61,9 @@ export class AllException extends HttpException {
   })
   timestamp: string; // Timestamp of the exception
 
+  /**
+   * Trace ID of the request.
+   */
   @ApiProperty({
     description: 'Trace ID of the request',
     example: '65b5f773-df95-4ce5-a917-62ee832fcdd0',

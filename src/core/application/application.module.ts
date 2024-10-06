@@ -14,6 +14,32 @@ import { LogModule } from '../log/log.module';
 import { ApplicationController } from './application.controller';
 import { ApplicationService } from './application.service';
 
+/**
+ * ApplicationModule is the root module of the application.
+ * It imports and configures various modules and services required for the application to function.
+ *
+ * @module ApplicationModule
+ *
+ * @description
+ * This module imports the following modules:
+ * - ConfigModule: Configures environment variables and loads configuration files.
+ * - LogModule: Handles logging functionality.
+ * - DatabaseModule: Manages database connections and operations.
+ *
+ * @imports
+ * - ConfigModule.forRoot: Configures environment variables with options for caching, file paths, variable expansion, and validation.
+ * - LogModule: Provides logging capabilities.
+ * - DatabaseModule: Manages database interactions.
+ *
+ * @controllers
+ * - ApplicationController: Handles incoming requests and routes them to appropriate services.
+ *
+ * @providers
+ * - ApplicationService: Contains business logic and application services.
+ *
+ * @exports
+ * - None
+ */
 @Module({
   imports: [
     // Configure environment variables

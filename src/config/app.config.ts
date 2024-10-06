@@ -46,6 +46,17 @@ class EnvironmentVariablesValidator {
   LOG_LEVEL: E_APP_LOG_LEVELS;
 }
 
+/**
+ * Registers the application configuration using the `registerAs` function.
+ * Validates the environment variables using `validateConfigUtil` and `EnvironmentVariablesValidator`.
+ *
+ * @returns {AppConfig} The application configuration object.
+ *
+ * @property {string} env - The environment in which the application is running. Defaults to 'production'.
+ * @property {number} port - The port on which the application will run. Defaults to 3000.
+ * @property {string} host - The host address of the application. Defaults to 'localhost'.
+ * @property {string} logLevel - The logging level for the application. Defaults to 'info'.
+ */
 export default registerAs<AppConfig>('app', (): AppConfig => {
   validateConfigUtil(process.env, EnvironmentVariablesValidator);
 

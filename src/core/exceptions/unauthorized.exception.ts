@@ -12,6 +12,66 @@ import { IException, IHttpUnauthorizedExceptionResponse } from './interfaces';
 /**
  * A custom exception for unauthorized access errors.
  */
+/**
+ * Represents an UnauthorizedException which extends the HttpException class.
+ * This exception is thrown when an unauthorized access attempt is made.
+ *
+ * @class UnauthorizedException
+ * @extends {HttpException}
+ *
+ * @property {number} code - The error code.
+ * @property {Error} cause - The error that caused this exception.
+ * @property {string} message - The error message.
+ * @property {string} description - The detailed description of the error.
+ * @property {string} timestamp - Timestamp of the exception.
+ * @property {string} traceId - Trace ID of the request.
+ *
+ * @constructor
+ * @param {IException} exception - An object containing the exception details.
+ * @param {string} exception.message - A string representing the error message.
+ * @param {Error} exception.cause - An object representing the cause of the error.
+ * @param {string} exception.description - A string describing the error in detail.
+ * @param {number} exception.code - A number representing internal status code which is helpful in the future for frontend.
+ *
+ * @method setTraceId
+ * @param {string} traceId - A string representing the Trace ID.
+ *
+ * @method generateHttpResponseBody
+ * @param {string} [message] - A string representing the message to include in the response body.
+ * @returns {IHttpUnauthorizedExceptionResponse} - An object representing the HTTP response body.
+ *
+ * @method static TOKEN_EXPIRED_ERROR
+ * @param {string} [msg] - An optional error message.
+ * @returns {UnauthorizedException} - An instance of the UnauthorizedException class.
+ *
+ * @method static JSON_WEB_TOKEN_ERROR
+ * @param {string} [msg] - An optional error message.
+ * @returns {UnauthorizedException} - An instance of the UnauthorizedException class.
+ *
+ * @method static UNAUTHORIZED_ACCESS
+ * @param {string} [description] - An optional detailed description of the error.
+ * @returns {UnauthorizedException} - An instance of the UnauthorizedException class.
+ *
+ * @method static RESOURCE_NOT_FOUND
+ * @param {string} [msg] - Optional message for the exception.
+ * @returns {UnauthorizedException} - A UnauthorizedException with the appropriate error code and message.
+ *
+ * @method static USER_NOT_VERIFIED
+ * @param {string} [msg] - Optional message for the exception.
+ * @returns {UnauthorizedException} - A UnauthorizedException with the appropriate error code and message.
+ *
+ * @method static UNEXPECTED_ERROR
+ * @param {any} error - The error that caused this exception.
+ * @returns {UnauthorizedException} - An instance of the UnauthorizedException class.
+ *
+ * @method static REQUIRED_RE_AUTHENTICATION
+ * @param {string} [msg] - An optional error message.
+ * @returns {UnauthorizedException} - An instance of the UnauthorizedException class.
+ *
+ * @method static INVALID_RESET_PASSWORD_TOKEN
+ * @param {string} [msg] - An optional error message.
+ * @returns {UnauthorizedException} - An instance of the UnauthorizedException class.
+ */
 export class UnauthorizedException extends HttpException {
   /** The error code. */
   @ApiProperty({

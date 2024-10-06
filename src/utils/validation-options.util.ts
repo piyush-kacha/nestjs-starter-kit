@@ -34,6 +34,26 @@ const generateErrors = (errors: ValidationError[]) => {
  * Validation options util.
  * @description This is the validation options util.
  */
+/**
+ * Utility object for configuring validation options in a NestJS application.
+ *
+ * @constant
+ * @type {ValidationPipeOptions}
+ *
+ * @property {boolean} transform - Transform the incoming value to the type defined in the DTO.
+ * @property {boolean} whitelist - Remove any extra properties sent by the client.
+ * @property {boolean} always - Always transform the incoming value to the type defined in the DTO.
+ * @property {boolean} forbidNonWhitelisted - Don't throw an error if extra properties are sent by the client.
+ * @property {boolean} enableDebugMessages - Enable debug messages for the validation pipe.
+ * @property {object} transformOptions - Options for transforming incoming values.
+ * @property {boolean} transformOptions.enableImplicitConversion - Enable implicit conversion of incoming values.
+ * @property {boolean} transformOptions.enableCircularCheck - Enable circular check for incoming values.
+ * @property {boolean} forbidUnknownValues - Throw an error if unknown values are sent by the client.
+ * @property {HttpStatus} errorHttpStatusCode - Set the HTTP status code for validation errors.
+ * @property {Function} exceptionFactory - Factory function to create an exception for validation errors.
+ * @param {ValidationError[]} errors - Array of validation errors.
+ * @returns {UnprocessableEntityException} - Exception containing validation errors.
+ */
 export const validationOptionsUtil: ValidationPipeOptions = {
   transform: true, // transform the incoming value to the type defined in the DTO
   whitelist: true, // remove any extra properties sent by the client
