@@ -29,6 +29,7 @@ export async function bootstrap(): Promise<NestExpressApplication> {
   // Create the NestJS application instance
   const app: NestExpressApplication = await NestFactory.create<NestExpressApplication>(AppModule, new ExpressAdapter(), {
     bufferLogs: true,
+    forceCloseConnections: true,
   });
 
   // Use the application container

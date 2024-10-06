@@ -6,7 +6,7 @@ This is a starter kit for building a Nest.js application with MongoDB, Express, 
 
 To get started with this project, clone the repository and install the dependencies:
 
-``` shell
+```shell
 git clone https://github.com/piyush-kacha/nestjs-starter-kit.git YOUR_PROJECT_NAME # Replace YOUR_PROJECT_NAME with the name of your project
 cd YOUR_PROJECT_NAME
 npm ci
@@ -14,7 +14,7 @@ npm ci
 
 Use the copy command to create a copy of the example .env file. Replace `example.env` with the name of your example (`.env` or `.env.local` or `.env.development` or `.env.test`) file:
 
-``` shell
+```shell
 cp example.env .env # OR .env.local - .env.development - .env.test
 ```
 
@@ -22,34 +22,35 @@ cp example.env .env # OR .env.local - .env.development - .env.test
 
 1. Generate a private key:
 
-    ``` shell
-    openssl genrsa -out .keys/private_key.pem 2048
-    ```
+  ```shell
+  openssl genrsa -out .keys/private_key.pem 2048
+  ```
 
-2. Extract the public key from the private key:
+1. Extract the public key from the private key:
 
-    ``` shell
-    openssl rsa -in .keys/private_key.pem -outform PEM -pubout -out .keys/public_key.pem
-    ```
+  ```shell
+  openssl rsa -in .keys/private_key.pem -outform PEM -pubout -out .keys/public_key.pem
+  ```
 
-    This will create two files in the `.keys` directory **(THIS DIRECTORY IS IGNORED)**: `.keys/private_key.pem` (the private key) and `.keys/public_key.pem` (the corresponding public key). **DONT SHARE THE PRIVATE KEY WITH ANYONE.**
+  This will create two files in the `.keys` directory **(THIS DIRECTORY IS IGNORED)**: `.keys/private_key.pem` (the private key) and `.keys/public_key.pem` (the corresponding public key). **DON'T SHARE THE PRIVATE KEY WITH ANYONE.**
 
-    ***NOTE:*** The key size (2048 bits in this example) can be adjusted to suit your security requirements.
-3. Encode the public key in base64 encoding:
+  **_NOTE:_** The key size (2048 bits in this example) can be adjusted to suit your security requirements.
 
-   ```shell
-   openssl base64 -A -in .keys/public_key.pem -out .keys/public_key_base64.txt
-   ```
+1. Encode the public key in base64 encoding:
 
-   Copy the contents of the `.keys/public_key_base64.txt` file and paste it into `JWT_PUBLIC_KEY` variable declared on your `.env` file.
+  ```shell
+  openssl base64 -A -in .keys/public_key.pem -out .keys/public_key_base64.txt
+  ```
 
-4. Encode the private key in base64 encoding:
+  Copy the contents of the `.keys/public_key_base64.txt` file and paste it into the `JWT_PUBLIC_KEY` variable declared in your `.env` file.
 
-   ```sh
-   openssl base64 -A -in .keys/private_key.pem -out .keys/private_key_base64.txt
-   ```
+1. Encode the private key in base64 encoding:
 
-    Copy the contents of the `.keys/private_key_base64.txt` file and paste it into `JWT_PUBLJWT_PRIVATE_KEYIC_KEY` variable declared on your `.env` file.
+  ```sh
+  openssl base64 -A -in .keys/private_key.pem -out .keys/private_key_base64.txt
+  ```
+
+  Copy the contents of the `.keys/private_key_base64.txt` file and paste it into the `JWT_PRIVATE_KEY` variable declared in your `.env` file.
 
 ## Running the Application
 
@@ -91,114 +92,163 @@ npm run start:prod
 
 By leveraging this code structure, you can benefit from the well-organized and maintainable foundation provided by the NestJS starter kit. It provides a solid structure for building scalable and robust applications while incorporating best practices and popular libraries.
 
-# Project Structure
+## Project Structure
 
 ```bash
 nestjs-starter-kit/
-.
-├── Dockerfile
-├── LICENSE
-├── README.md
-├── .husky/
-│   ├── commit-msg
-│   └── pre-commit
-├── .keys/
-│   ├── .gitkeep
-├── src
-│   ├── app.controller.spec.ts
-│   ├── app.controller.ts
-│   ├── app.module.ts
-│   ├── app.service.ts
-│   ├── config
-│   │   ├── api.config.ts
-│   │   ├── app.config.ts
-│   │   ├── auth.config.ts
-│   │   ├── database.config.ts
-│   │   ├── infra.config.ts
-│   │   └── swagger.config.ts
-│   ├── exceptions
-│   │   ├── bad-request.exception.ts
-│   │   ├── exceptions.constants.ts
-│   │   ├── exceptions.interface.ts
-│   │   ├── forbidden.exception.ts
-│   │   ├── index.ts
-│   │   ├── internal-server-error.exception.ts
-│   │   └── unauthorized.exception.ts
-│   ├── filters
-│   │   ├── all-exception.filter.ts
-│   │   ├── bad-request-exception.filter.ts
-│   │   ├── forbidden-exception.filter.ts
-│   │   ├── index.ts
-│   │   ├── internal-server-error-exception.filter.tsFilter
-│   │   ├── not-found-exception.filter.ts
-│   │   ├── unauthorized-exception.filter.ts
-│   │   └── validator-exception.filter.ts
-│   ├── main.ts
-│   ├── modules
-│   │   ├── auth
-│   │   │   ├── auth.controller.ts
-│   │   │   ├── auth.module.ts
-│   │   │   ├── auth.service.ts
-│   │   │   ├── decorators
-│   │   │   │   └── get-user.decorator.ts
-│   │   │   ├── dtos
-│   │   │   │   ├── index.ts
-│   │   │   │   ├── login.req.dto.ts
-│   │   │   │   ├── login.res.dto.ts
-│   │   │   │   ├── signup.req.dto.ts
-│   │   │   │   └── signup.res.dto.ts
-│   │   │   ├── guards
-│   │   │   │   └── jwt-user-auth.guard.ts
-│   │   │   ├── interfaces
-│   │   │   │   └── jwt-user-payload.interface.ts
-│   │   │   └── strategies
-│   │   │       └── jwt-user.strategy.ts
-│   │   ├── user
-│   │   │   ├── dtos
-│   │   │   │   ├── get-profile.res.dto.ts
-│   │   │   │   └── index.ts
-│   │   │   ├── user.controller.ts
-│   │   │   ├── user.module.ts
-│   │   │   ├── user.query.service.ts
-│   │   │   ├── user.repository.ts
-│   │   │   └── user.schema.ts
-│   │   └── workspace
-│   │       ├── workspace.module.ts
-│   │       ├── workspace.query-service.ts
-│   │       ├── workspace.repository.ts
-│   │       └── workspace.schema.ts
-│   └── shared
-│       ├── enums
-│       │   ├── db.enum.ts
-│       │   ├── index.ts
-│       └── types
-│           ├── index.ts
-│           └── schema.type.ts
-│   └── utils
-│       ├── index.ts
-│       ├── number.util.ts
-│       └── validation-options.util.ts
-├── test
-│   ├── app.e2e-spec.ts
-│   └── jest-e2e.json
-├── tsconfig.build.json
-└── tsconfig.json
-├── example.env
-├── .commitlintrc.js
-├── .dockerignore
-├── .editorconfig
-├── .eslintignore
-├── .eslintrc.js
-├── .gitignore
-├── .lintstagedrc.js
-├── .npmignore
-├── .npmrc
-├── .prettierignore
-├── .prettierrc
-├── nest-cli.json
-├── package-lock.json
-├── package.json
-├── renovate.json
+├─ .commitlintrc.js
+├─ .dockerignore
+├─ .editorconfig
+├─ .eslintignore
+├─ .eslintrc.js
+├─ .gitignore
+├─ .husky/
+│  ├─ _/
+│  │  ├─ .gitignore
+│  │  └─ husky.sh
+│  ├─ commit-msg
+│  └─ pre-commit
+├─ .keys/
+│  └─ .gitkeep
+├─ .lintstagedrc.js
+├─ .npmignore
+├─ .npmrc
+├─ .prettierignore
+├─ .prettierrc
+├─ .release-it.json
+├─ .vscode/
+│  ├─ extensions.json
+│  └─ settings.json
+├─ Dockerfile
+├─ LICENSE
+├─ README.md
+├─ example.env
+├─ nest-cli.json
+├─ package-lock.json
+├─ package.json
+├─ renovate.json
+├─ src/
+│  ├─ app.module.ts
+│  ├─ config/
+│  │  ├─ api.config.ts
+│  │  ├─ app.config.ts
+│  │  ├─ auth.config.ts
+│  │  ├─ database.config.ts
+│  │  ├─ infra.config.ts
+│  │  └─ swagger.config.ts
+│  ├─ core/
+│  │  ├─ application/
+│  │  │  ├─ application.controller.ts
+│  │  │  ├─ application.module.ts
+│  │  │  └─ application.service.ts
+│  │  ├─ core.module.ts
+│  │  ├─ database/
+│  │  │  ├─ abstracts/
+│  │  │  │  ├─ database.abstract.interface.ts
+│  │  │  │  ├─ database.abstract.repository.ts
+│  │  │  │  └─ index.ts
+│  │  │  ├─ database-schema-options.ts
+│  │  │  ├─ database.module.ts
+│  │  │  └─ database.service.ts
+│  │  ├─ exceptions/
+│  │  │  ├─ all.exception.ts
+│  │  │  ├─ bad-request.exception.ts
+│  │  │  ├─ constants/
+│  │  │  │  ├─ exceptions.constants.ts
+│  │  │  │  └─ index.ts
+│  │  │  ├─ forbidden.exception.ts
+│  │  │  ├─ gateway-timeout.exception.ts
+│  │  │  ├─ index.ts
+│  │  │  ├─ interfaces/
+│  │  │  │  ├─ exceptions.interface.ts
+│  │  │  │  └─ index.ts
+│  │  │  ├─ internal-server-error.exception.ts
+│  │  │  └─ unauthorized.exception.ts
+│  │  ├─ filters/
+│  │  │  ├─ all-exception.filter.ts
+│  │  │  ├─ bad-request-exception.filter.ts
+│  │  │  ├─ forbidden-exception.filter.ts
+│  │  │  ├─ gateway-timeout.exception.filter.ts
+│  │  │  ├─ index.ts
+│  │  │  ├─ internal-server-error-exception.filter.ts
+│  │  │  ├─ not-found-exception.filter.ts
+│  │  │  ├─ unauthorized-exception.filter.ts
+│  │  │  └─ validator-exception.filter.ts
+│  │  ├─ interceptors/
+│  │  │  ├─ index.ts
+│  │  │  ├─ serializer.interceptor.ts
+│  │  │  └─ timeout.interceptor.ts
+│  │  ├─ log/
+│  │  │  └─ log.module.ts
+│  │  └─ middlewares/
+│  │     ├─ index.ts
+│  │     └─ logging.middleware.ts
+│  ├─ main.ts
+│  ├─ metadata.ts
+│  ├─ modules/
+│  │  ├─ auth/
+│  │  │  ├─ auth.controller.ts
+│  │  │  ├─ auth.module.ts
+│  │  │  ├─ auth.service.ts
+│  │  │  ├─ decorators/
+│  │  │  │  ├─ get-user.decorator.ts
+│  │  │  │  ├─ index.ts
+│  │  │  │  └─ public.decorator.ts
+│  │  │  ├─ dtos/
+│  │  │  │  ├─ index.ts
+│  │  │  │  ├─ login.req.dto.ts
+│  │  │  │  ├─ login.res.dto.ts
+│  │  │  │  ├─ signup.req.dto.ts
+│  │  │  │  └─ signup.res.dto.ts
+│  │  │  ├─ guards/
+│  │  │  │  ├─ index.ts
+│  │  │  │  └─ jwt-user-auth.guard.ts
+│  │  │  ├─ interfaces/
+│  │  │  │  ├─ index.ts
+│  │  │  │  └─ jwt-user-payload.interface.ts
+│  │  │  └─ strategies/
+│  │  │     ├─ index.ts
+│  │  │     └─ jwt-user.strategy.ts
+│  │  ├─ modules.module.ts
+│  │  ├─ user/
+│  │  │  ├─ dtos/
+│  │  │  │  ├─ get-profile.res.dto.ts
+│  │  │  │  └─ index.ts
+│  │  │  ├─ user.controller.ts
+│  │  │  ├─ user.module.ts
+│  │  │  ├─ user.query.service.ts
+│  │  │  ├─ user.repository.ts
+│  │  │  └─ user.schema.ts
+│  │  └─ workspace/
+│  │     ├─ workspace.module.ts
+│  │     ├─ workspace.query-service.ts
+│  │     ├─ workspace.repository.ts
+│  │     └─ workspace.schema.ts
+│  ├─ shared/
+│  │  ├─ decorators/
+│  │  │  ├─ api-error-responses.decorator.ts
+│  │  │  └─ index.ts
+│  │  ├─ enums/
+│  │  │  ├─ db.enum.ts
+│  │  │  └─ index.ts
+│  │  ├─ index.ts
+│  │  └─ types/
+│  │     ├─ index.ts
+│  │     ├─ or-never.type.ts
+│  │     └─ schema.type.ts
+│  └─ utils/
+│     ├─ date-time.util.ts
+│     ├─ deep-resolver.util.ts
+│     ├─ document-entity-helper.util.ts
+│     ├─ index.ts
+│     ├─ number.util.ts
+│     ├─ validate-config.util.ts
+│     └─ validation-options.util.ts
+├─ test/
+│  ├─ app.e2e-spec.ts
+│  └─ jest-e2e.json
+├─ tsconfig.build.json
+└─ tsconfig.json
 ```
 
 This project follows a structured organization to maintain clean, scalable code, promoting best practices for enterprise-level applications.
@@ -212,24 +262,29 @@ This project follows a structured organization to maintain clean, scalable code,
 
 ### 2. Source Code (`src/`)
 
-- **`app.controller.ts`**: Defines the root controller for handling incoming requests.
 - **`app.module.ts`**: The main module that aggregates all the feature modules and services.
-- **`app.service.ts`**: Contains the primary business logic for the application.
 - **`main.ts`**: The entry point of the NestJS application; bootstraps the application and configures clustering.
 
 #### Subdirectories within `src/`
 
 - **`config/`**: Stores configuration files (e.g., `database.config.ts`, `auth.config.ts`) for different aspects of the application.
-- **`exceptions/`**: Custom exception classes (e.g., `bad-request.exception.ts`, `unauthorized.exception.ts`) that extend NestJS's built-in exceptions.
-- **`filters/`**: Custom exception filters (e.g., `all-exception.filter.ts`, `not-found-exception.filter.ts`) for handling different types of errors globally.
+- **`core/`**: Core functionalities and shared resources:
+  - **`application/`**: Main application logic and services.
+  - **`database/`**: Database-related configurations and services.
+  - **`exceptions/`**: Custom exception classes.
+  - **`filters/`**: Custom exception filters.
+  - **`interceptors/`**: Interceptors for request/response handling.
+  - **`log/`**: Logging module.
+  - **`middlewares/`**: Custom middlewares.
 - **`modules/`**: Contains feature modules of the application:
-  - **`auth/`**: Handles authentication-related functionality, including controllers, services, guards, and strategies.
-  - **`user/`**: Manages user-related operations, including controllers, services, repositories, and schemas.
-  - **`workspace/`**: Manages workspace-related functionality, with services, repositories, and schemas.
+  - **`auth/`**: Handles authentication-related functionality.
+  - **`user/`**: Manages user-related operations.
+  - **`workspace/`**: Manages workspace-related functionality.
 - **`shared/`**: Contains shared resources and utilities:
-  - **`enums/`**: Defines enumerations (e.g., `db.enum.ts`) used across the application.
-  - **`types/`**: Custom TypeScript types (e.g., `schema.type.ts`) used for type safety throughout the codebase.
-- **`utils/`**: Utility functions (e.g., `number.util.ts`, `validation-options.util.ts`) for common operations.
+  - **`decorators/`**: Custom decorators.
+  - **`enums/`**: Enumerations used across the application.
+  - **`types/`**: Custom TypeScript types.
+- **`utils/`**: Utility functions for common operations.
 
 ### 3. Testing (`test/`)
 
