@@ -1,21 +1,13 @@
-import { ApiBadRequestResponse, ApiInternalServerErrorResponse, ApiOkResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { Body, Controller, HttpCode, Post } from '@nestjs/common';
 
-import { BadRequestException, InternalServerErrorException, UnauthorizedException } from 'src/core/exceptions';
+import { ApiErrorResponses } from 'src/shared';
 
 import { AuthService } from './auth.service';
 import { Public } from './decorators';
 import { LoginReqDto, LoginResDto, SignupReqDto, SignupResDto } from './dtos';
 
-@ApiBadRequestResponse({
-  type: BadRequestException,
-})
-@ApiInternalServerErrorResponse({
-  type: InternalServerErrorException,
-})
-@ApiUnauthorizedResponse({
-  type: UnauthorizedException,
-})
+@ApiErrorResponses()
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {

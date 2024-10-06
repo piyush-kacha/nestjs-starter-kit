@@ -16,7 +16,7 @@ export class ForbiddenException extends HttpException {
   /** The error code. */
   @ApiProperty({
     enum: ExceptionConstants.ForbiddenCodes,
-    description: 'You do not have permission to perform this action.',
+    description: 'A unique code identifying the error.',
     example: ExceptionConstants.ForbiddenCodes.MISSING_PERMISSIONS,
   })
   code: number;
@@ -28,13 +28,14 @@ export class ForbiddenException extends HttpException {
   /** The error message. */
   @ApiProperty({
     description: 'Message for the exception',
-    example: 'You do not have permission to perform this action.',
+    example: 'Access to this resource is forbidden.',
   })
   message: string;
 
   /** The detailed description of the error. */
   @ApiProperty({
     description: 'A description of the error message.',
+    example: 'You do not have permission to perform this action.',
   })
   description: string;
 

@@ -1,0 +1,10 @@
+/* eslint-disable */
+export default async () => {
+    const t = {
+        ["./modules/user/user.schema"]: await import("./modules/user/user.schema"),
+        ["./modules/user/dtos/get-profile.res.dto"]: await import("./modules/user/dtos/get-profile.res.dto"),
+        ["./modules/auth/dtos/signup.res.dto"]: await import("./modules/auth/dtos/signup.res.dto"),
+        ["./modules/auth/dtos/login.res.dto"]: await import("./modules/auth/dtos/login.res.dto")
+    };
+    return { "@nestjs/swagger": { "models": [[import("./modules/user/dtos/get-profile.res.dto"), { "GetProfileResDto": { message: { required: true, type: () => String }, user: { required: true, type: () => t["./modules/user/user.schema"].User } } }], [import("./modules/auth/dtos/signup.req.dto"), { "SignupReqDto": { email: { required: true, type: () => String }, name: { required: true, type: () => String }, password: { required: true, type: () => String }, workspaceName: { required: true, type: () => String } } }], [import("./modules/auth/dtos/signup.res.dto"), { "SignupResDto": { message: { required: true, type: () => String } } }], [import("./modules/auth/dtos/login.req.dto"), { "LoginReqDto": { email: { required: true, type: () => String }, password: { required: true, type: () => String } } }], [import("./modules/auth/dtos/login.res.dto"), { "LoginResDto": { message: { required: true, type: () => String }, accessToken: { required: true, type: () => String }, user: { required: true, type: () => t["./modules/user/user.schema"].User } } }]], "controllers": [[import("./core/application/application.controller"), { "ApplicationController": { "getHello": { type: String } } }], [import("./modules/user/user.controller"), { "UserController": { "getFullAccess": { type: t["./modules/user/dtos/get-profile.res.dto"].GetProfileResDto } } }], [import("./modules/auth/auth.controller"), { "AuthController": { "signup": { type: t["./modules/auth/dtos/signup.res.dto"].SignupResDto }, "login": { type: t["./modules/auth/dtos/login.res.dto"].LoginResDto } } }]] } };
+};

@@ -2,12 +2,15 @@
 import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { Controller, Get, HttpCode, Logger, UseGuards } from '@nestjs/common';
 
+import { ApiErrorResponses } from 'src/shared';
+
 import { GetUser } from '../auth/decorators';
 
 import { GetProfileResDto } from './dtos';
 import { UserDocument } from './user.schema';
 
 @ApiBearerAuth()
+@ApiErrorResponses()
 @ApiTags('User')
 @Controller('user')
 export class UserController {

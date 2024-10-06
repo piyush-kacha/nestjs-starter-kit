@@ -17,13 +17,13 @@ export class GatewayTimeoutException extends HttpException {
 
   @ApiProperty({
     description: 'Message for the exception',
-    example: 'Bad Request',
+    example: 'Gateway Timeout',
   })
   message: string; // Message for the exception
 
   @ApiProperty({
     description: 'A description of the error message.',
-    example: 'The input provided was invalid',
+    example: 'The server is taking too long to respond.',
   })
   description?: string; // Description of the exception
 
