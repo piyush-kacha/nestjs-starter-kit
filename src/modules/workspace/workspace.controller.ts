@@ -2,22 +2,22 @@ import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post } from '@nestj
 import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
 import { generateSlug } from 'src/utils';
-import { ApiErrorResponses } from 'src/shared';
+import { ApiErrorResponses, ApiGlobalResponse } from 'src/shared';
 
 import { CreateWorkspaceReqDto, FindWorkspaceBySlugReqDto } from './dtos';
 import { WorkspaceQueryService } from './workspace.query-service';
 import { Workspace } from './workspace.schema';
 
 @ApiBearerAuth()
-@ApiErrorResponses()
 @ApiTags('Workspaces')
 @Controller('workspaces')
 export class WorkspaceController {
   constructor(private readonly workspaceQueryService: WorkspaceQueryService) {}
 
   @HttpCode(HttpStatus.CREATED)
-  @ApiCreatedResponse({
-    type: Workspace,
+  @ApiGlobalResponse(Workspace, {
+    description: 'The workspace has been successfully created.',
+    isCreatedResponse: true,
   })
   @Post()
   async create(@Body() createWorkspaceReqDto: CreateWorkspaceReqDto): Promise<Workspace> {
@@ -38,8 +38,8 @@ export class WorkspaceController {
   }
 
   @HttpCode(HttpStatus.OK)
-  @ApiOkResponse({
-    type: Workspace,
+  @ApiGlobalResponse(Workspace, {
+    description: 'The workspaces have been successfully retrieved.',
     isArray: true,
   })
   @Get()
@@ -48,8 +48,8 @@ export class WorkspaceController {
   }
 
   @HttpCode(HttpStatus.OK)
-  @ApiOkResponse({
-    type: Workspace,
+  @ApiGlobalResponse(Workspace, {
+    description: 'The workspace has been successfully retrieved.',
   })
   @Get(':id')
   async findOneById(@Param('id') id: string): Promise<Workspace> {

@@ -16,6 +16,7 @@ import { AppModule } from './app.module';
 import { validationOptionsUtil } from './utils';
 
 import { E_APP_ENVIRONMENTS } from './config/app.config';
+import { HttpResponseInterceptor } from './core/interceptors';
 
 // Create a logger for the bootstrap process
 const logger: Logger = new Logger('Application Bootstrap');
@@ -121,6 +122,9 @@ export async function bootstrap(): Promise<NestExpressApplication> {
       exclude: ['/', '/docs', '/docs/json', '/docs/yaml'],
     });
   }
+
+  // Set up the global HTTP response
+  app.useGlobalInterceptors(new HttpResponseInterceptor());
 
   // Set up the validation pipe
   app.useGlobalPipes(new ValidationPipe(validationOptionsUtil));

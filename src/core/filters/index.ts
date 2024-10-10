@@ -5,4 +5,5 @@ export * from './gateway-timeout.exception.filter';
 export * from './internal-server-error-exception.filter';
 export * from './not-found-exception.filter';
 export * from './unauthorized-exception.filter';
+export * from './unprocessable-entity-exception.filter';
 export * from './validator-exception.filter';

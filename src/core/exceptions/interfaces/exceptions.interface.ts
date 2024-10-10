@@ -16,6 +16,27 @@ export interface IException {
 }
 
 /**
+ * Interface representing the structure of a not found exception response.
+ *
+ * @interface IHttpNotFoundExceptionResponse
+ *
+ * @property {number} code - The HTTP status code of the not found error.
+ * @property {string} message - A brief message describing the error.
+ * @property {string} description - A detailed description of the error.
+ * @property {string} path - The path of the request that caused the not found error.
+ * @property {string} timestamp - The timestamp when the error occurred.
+ * @property {string} traceId - A unique identifier for tracing the error.
+ */
+export interface IHttpNotFoundExceptionResponse {
+  code: number;
+  message: string;
+  description: string;
+  path?: string;
+  timestamp: string;
+  traceId: string;
+}
+
+/**
  * Interface representing the structure of a bad request exception response.
  *
  * @interface IHttpBadRequestExceptionResponse
@@ -37,7 +58,7 @@ export interface IHttpBadRequestExceptionResponse {
 /**
  * Interface representing the structure of a not found exception response.
  *
- * @interface IHttpNotFoundExceptionResponse
+ * @interface IHttpInternalServerErrorExceptionResponse
  *
  * @property {number} code - The HTTP status code of the not found error.
  * @property {string} message - A brief message describing the error.
@@ -94,13 +115,14 @@ export interface IHttpForbiddenExceptionResponse {
 /**
  * Interface representing the structure of a conflict exception response.
  *
- * @interface IHttpConflictExceptionResponse
+ * @interface IHttpGatewayTimeOutExceptionResponse
  *
  * @property {number} code - The HTTP status code of the conflict error.
  * @property {string} message - A brief message describing the error.
  * @property {string} description - A detailed description of the error.
  * @property {string} timestamp - The timestamp when the error occurred.
  * @property {string} traceId - A unique identifier for tracing the error.
+ * @property {string} path - The path of the request that caused the conflict.
  */
 export interface IHttpGatewayTimeOutExceptionResponse {
   code: number;
@@ -114,11 +136,12 @@ export interface IHttpGatewayTimeOutExceptionResponse {
 /**
  * Interface representing the structure of a request timeout exception response.
  *
- * @interface IHttpRequestTimeoutExceptionResponse
+ * @interface IHttpAllExceptionResponse
  *
  * @property {number} code - The HTTP status code of the request timeout error.
  * @property {string} message - A brief message describing the error.
  * @property {string} description - A detailed description of the error.
+ * @property {unknown} error - The error that caused the exception.
  * @property {string} timestamp - The timestamp when the error occurred.
  * @property {string} traceId - A unique identifier for tracing the error.
  */
