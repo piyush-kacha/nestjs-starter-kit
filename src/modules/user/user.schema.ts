@@ -1,34 +1,48 @@
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
-
-import { HydratedDocument, Schema as MongooseSchema, Types } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
-import { DatabaseCollectionNames } from '../../shared/enums';
-import { Identifier } from '../../shared/types';
+import { HydratedDocument, Schema as MongooseSchema, Types } from 'mongoose';
 
-@Schema({
-  timestamps: true,
-  collection: DatabaseCollectionNames.USER,
-})
-export class User {
-  // _id is the unique identifier of the user
-  @ApiProperty({
-    description: 'The unique identifier of the user',
-    example: '643405452324db8c464c0584',
-  })
-  @Prop({
-    type: MongooseSchema.Types.ObjectId,
-    default: () => new Types.ObjectId(),
-  })
-  _id?: Types.ObjectId;
+import { DatabaseCollectionNames } from 'src/shared';
+import { EntityDocumentHelper } from 'src/utils';
+import { getDatabaseSchemaOptions } from 'src/core/database/database-schema-options';
 
+import { Workspace } from '../workspace/workspace.schema';
+
+export type UserDocument = HydratedDocument<User>;
+
+/**
+ * Represents a User entity in the database.
+ *
+ * @remarks
+ * This class extends `EntityDocumentHelper<User>` and is decorated with the `@Schema` decorator
+ * to define the schema options for the User collection.
+ *
+ * @property {string} email - The unique identifier of the user.
+ * @property {string} [password] - The hashed password of the user.
+ * @property {Workspace} workspace - The unique identifier of the workspace that the user belongs to.
+ * @property {string} [name] - The full name of the user.
+ * @property {boolean} verified - Indicates whether the user has verified their email address.
+ * @property {number} [verificationCode] - A 6-digit number sent to the user's email address to verify their email address.
+ * @property {Date} [verificationCodeExpiry] - The date and time when the verification code expires.
+ * @property {string} [resetToken] - Token used for resetting the user's password.
+ * @property {number} [registerCode] - Code used when the user is going to reset or change their password, causing all active sessions to be logged out.
+ */
+@Schema(getDatabaseSchemaOptions(DatabaseCollectionNames.USER, ['password']))
+export class User extends EntityDocumentHelper<User> {
   // email is the unique identifier of the user
   @ApiProperty({
+    type: String,
     description: 'The unique identifier of the user',
     example: 'john@example.com',
   })
   @Prop({
+    type: String,
     required: true,
+    unique: true,
+    index: true,
+    lowercase: true,
+    trim: true,
   })
   email: string;
 
@@ -45,8 +59,10 @@ export class User {
   @Prop({
     type: MongooseSchema.Types.ObjectId,
     ref: DatabaseCollectionNames.WORKSPACE,
+    required: true,
+    autopopulate: true,
   })
-  workspace: Identifier;
+  workspace: Workspace;
 
   // name is the full name of the user
   @ApiProperty({
@@ -62,7 +78,7 @@ export class User {
     example: true,
   })
   @Prop({
-    type: MongooseSchema.Types.Boolean,
+    type: Boolean,
     default: false,
   })
   verified: boolean;
@@ -70,14 +86,14 @@ export class User {
   // verificationCode is a 6-digit number that is sent to the user's email address to verify their email address
   @ApiHideProperty()
   @Prop({
-    type: MongooseSchema.Types.Number,
+    type: Number,
   })
   verificationCode?: number;
 
   // verificationCodeExpiry is the date and time when the verification code expires
   @ApiHideProperty()
   @Prop({
-    type: MongooseSchema.Types.Date,
+    type: Date,
   })
   verificationCodeExpiry?: Date;
 
@@ -88,26 +104,11 @@ export class User {
   // registerCode is used for when user is going to reset password or change password perform at time all same user login session will be logout
   @ApiHideProperty()
   @Prop({
-    type: MongooseSchema.Types.Number,
+    type: Number,
   })
   registerCode?: number;
-
-  @ApiProperty({
-    description: 'Date of creation',
-  })
-  @Prop()
-  createdAt?: Date;
-
-  @ApiProperty({
-    description: 'Date of last update',
-  })
-  @Prop()
-  updatedAt?: Date;
 }
 
-export type UserIdentifier = Identifier | User;
-
-export type UserDocument = HydratedDocument<User>;
 export const UserSchema = SchemaFactory.createForClass(User);
 
 UserSchema.index({ email: 1, isActive: 1 });

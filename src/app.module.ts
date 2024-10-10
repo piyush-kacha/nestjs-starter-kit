@@ -1,78 +1,97 @@
-// Import required modules
-import { APP_FILTER, APP_PIPE } from '@nestjs/core';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { LoggerModule } from 'nestjs-pino';
-import { Module, ValidationError, ValidationPipe } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
+/**
+ * AppModule is the main application module that combines CoreModule and ModulesModule.
+ * It provides various filters and interceptors for handling exceptions and requests.
+ */
+import { Module } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 
-// Import application files
-
-import { AppConfig } from './app.config';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { configuration } from './config/index';
-
-// Import filters
+import { CoreModule } from './core/core.module';
 import {
   AllExceptionsFilter,
   BadRequestExceptionFilter,
   ForbiddenExceptionFilter,
+  GatewayTimeOutExceptionFilter,
   NotFoundExceptionFilter,
   UnauthorizedExceptionFilter,
   ValidationExceptionFilter,
-} from './filters';
-import { AuthModule } from './modules/auth/auth.module';
-import { UserModule } from './modules/user/user.module';
-import { WorkspaceModule } from './modules/workspace/workspace.module';
+} from './core/filters';
+import { TimeoutInterceptor } from './core/interceptors';
+import { ModulesModule } from './modules/modules.module';
+import { JwtUserAuthGuard } from './modules/auth/guards';
 
-// Import other modules
-
+/**
+ * The main application module for the NestJS starter kit.
+ *
+ * @module AppModule
+ *
+ * @imports
+ * - CoreModule: The core module of the application.
+ * - ModulesModule: The main modules of the application.
+ *
+ * @providers
+ * - APP_FILTER:
+ *   - AllExceptionsFilter: Handles all exceptions.
+ *   - BadRequestExceptionFilter: Handles bad request exceptions.
+ *   - UnauthorizedExceptionFilter: Handles unauthorized exceptions.
+ *   - ForbiddenExceptionFilter: Handles forbidden exceptions.
+ *   - NotFoundExceptionFilter: Handles not found exceptions.
+ *   - GatewayTimeOutExceptionFilter: Handles gateway timeout exceptions.
+ * - APP_PIPE:
+ *   - ValidationExceptionFilter: Handles validation exceptions.
+ * - APP_INTERCEPTOR:
+ *   - TimeoutInterceptor: Intercepts requests and applies a timeout based on configuration.
+ * - APP_GUARD:
+ *   - JwtUserAuthGuard: Guards routes using JWT authentication.
+ *
+ * @param {ConfigService} configService - Service to manage application configuration.
+ * @returns {TimeoutInterceptor} - Returns a new instance of TimeoutInterceptor with the configured timeout.
+ */
 @Module({
-  imports: [
-    // Configure environment variables
-    ConfigModule.forRoot({
-      isGlobal: true, // Make the configuration global
-      load: [configuration], // Load the environment variables from the configuration file
-    }),
-
-    // Configure logging
-    LoggerModule.forRoot(AppConfig.getLoggerConfig()), // ! forRootAsync is not working with ConfigService in nestjs-pino
-
-    // Configure mongoose
-    MongooseModule.forRootAsync({
-      imports: [ConfigModule], // Import the ConfigModule so that it can be injected into the factory function
-      inject: [ConfigService], // Inject the ConfigService into the factory function
-      useFactory: async (configService: ConfigService) => ({
-        // Get the required configuration settings from the ConfigService
-        uri: configService.get('database.uri'),
-      }),
-    }),
-    // Import other modules
-    AuthModule,
-    UserModule,
-    WorkspaceModule,
-  ],
-  controllers: [AppController], // Define the application's controller
+  imports: [CoreModule, ModulesModule],
   providers: [
-    AppService,
-    { provide: APP_FILTER, useClass: AllExceptionsFilter },
-    { provide: APP_FILTER, useClass: ValidationExceptionFilter },
-    { provide: APP_FILTER, useClass: BadRequestExceptionFilter },
-    { provide: APP_FILTER, useClass: UnauthorizedExceptionFilter },
-    { provide: APP_FILTER, useClass: ForbiddenExceptionFilter },
-    { provide: APP_FILTER, useClass: NotFoundExceptionFilter },
     {
-      // Allowing to do validation through DTO
-      // Since class-validator library default throw BadRequestException, here we use exceptionFactory to throw
-      // their internal exception so that filter can recognize it
-      provide: APP_PIPE,
-      useFactory: () =>
-        new ValidationPipe({
-          exceptionFactory: (errors: ValidationError[]) => {
-            return errors[0];
-          },
-        }),
+      provide: APP_FILTER,
+      useClass: AllExceptionsFilter,
     },
-  ], // Define the application's service
+    {
+      provide: APP_PIPE,
+      useClass: ValidationExceptionFilter,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: BadRequestExceptionFilter,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: UnauthorizedExceptionFilter,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: ForbiddenExceptionFilter,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: NotFoundExceptionFilter,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: GatewayTimeOutExceptionFilter,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useFactory: (configService: ConfigService) => {
+        const timeoutInMilliseconds = configService.get<number>('infra.requestTimeout', {
+          infer: true,
+        });
+        return new TimeoutInterceptor(timeoutInMilliseconds);
+      },
+      inject: [ConfigService],
+    },
+    {
+      provide: APP_GUARD,
+      useClass: JwtUserAuthGuard,
+    },
+  ],
 })
 export class AppModule {}

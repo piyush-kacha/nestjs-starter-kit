@@ -1,55 +1,69 @@
 // External dependencies
-import * as bcrypt from 'bcryptjs';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 
-// Internal dependencies
-import { JwtUserPayload } from './interfaces/jwt-user-payload.interface';
-import { LoginReqDto, LoginResDto, SignupReqDto, SignupResDto } from './dtos';
+import * as bcrypt from 'bcryptjs';
 
-// Other modules dependencies
-import { User } from '../user/user.schema';
+import { generateOTPCode, generateSlug } from 'src/utils';
+import { BadRequestException, UnauthorizedException } from 'src/core/exceptions';
+
 import { UserQueryService } from '../user/user.query.service';
+import { User } from '../user/user.schema';
 import { WorkspaceQueryService } from '../workspace/workspace.query-service';
+import { Workspace } from '../workspace/workspace.schema';
 
-// Shared dependencies
-import { BadRequestException } from '../../exceptions/bad-request.exception';
-import { UnauthorizedException } from '../../exceptions/unauthorized.exception';
+import { LoginReqDto, LoginResDto, SignupReqDto, SignupResDto } from './dtos';
+import { JwtUserPayload } from './interfaces';
 
 @Injectable()
 export class AuthService {
-  private readonly SALT_ROUNDS = 10;
+  private saltOrRounds: number;
 
   constructor(
+    private readonly configService: ConfigService,
+    private readonly jwtService: JwtService,
     private readonly userQueryService: UserQueryService,
     private readonly workspaceQueryService: WorkspaceQueryService,
-    private readonly jwtService: JwtService,
-  ) {}
+  ) {
+    this.saltOrRounds = this.configService.get<number>('authentication.bcryptSaltRounds', {
+      infer: true,
+    });
+  }
 
   async signup(signupReqDto: SignupReqDto): Promise<SignupResDto> {
     const { email, password, workspaceName, name } = signupReqDto;
 
-    const user = await this.userQueryService.findByEmail(email);
+    const user: User = await this.userQueryService.findByEmail(email);
     if (user) {
       throw BadRequestException.RESOURCE_ALREADY_EXISTS(`User with email ${email} already exists`);
     }
 
-    const workspacePayload = {
-      name: workspaceName,
-    };
-    const workspace = await this.workspaceQueryService.create(workspacePayload);
+    // Manage workspace
+    const workspaceSlug: string = generateSlug(workspaceName);
+    const existingWorkspace: Workspace = await this.workspaceQueryService.findBySlug(workspaceSlug);
+
+    let workspacePayload: Workspace;
+    if (existingWorkspace) {
+      workspacePayload = existingWorkspace;
+    } else {
+      workspacePayload = await this.workspaceQueryService.create({
+        slug: workspaceSlug,
+        name: workspaceName,
+      });
+    }
+    const workspace: Workspace = await this.workspaceQueryService.create(workspacePayload);
 
     // Hash password
-    const saltOrRounds = this.SALT_ROUNDS;
-    const hashedPassword = await bcrypt.hash(password, saltOrRounds);
+    const hashedPassword: string = await bcrypt.hash(password, this.saltOrRounds);
 
     const userPayload: User = {
       email,
       password: hashedPassword,
-      workspace: workspace._id,
+      workspace: workspace,
       name,
-      verified: true,
-      registerCode: this.generateCode(),
+      verified: false,
+      registerCode: generateOTPCode(),
       verificationCode: null,
       verificationCodeExpiry: null,
       resetToken: null,
@@ -62,27 +76,21 @@ export class AuthService {
     };
   }
 
-  /**
-   * Generates a random six digit OTP
-   * @returns {number} - returns the generated OTP
-   */
-  generateCode(): number {
-    const OTP_MIN = 100000;
-    const OTP_MAX = 999999;
-    return Math.floor(Math.random() * (OTP_MAX - OTP_MIN + 1)) + OTP_MIN;
-  }
-
   async login(loginReqDto: LoginReqDto): Promise<LoginResDto> {
     const { email, password } = loginReqDto;
 
-    const user = await this.userQueryService.findByEmail(email);
+    const user: User = await this.userQueryService.findByEmail(email);
     if (!user) {
       throw UnauthorizedException.UNAUTHORIZED_ACCESS('Invalid credentials');
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid: boolean = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       throw UnauthorizedException.UNAUTHORIZED_ACCESS('Invalid credentials');
+    }
+
+    if (!user.verified) {
+      throw UnauthorizedException.UNAUTHORIZED_ACCESS('User is not verified');
     }
 
     const payload: JwtUserPayload = {
@@ -90,12 +98,12 @@ export class AuthService {
       email: user.email,
       code: user.registerCode,
     };
-    const accessToken = await this.jwtService.signAsync(payload);
+    const accessToken: string = await this.jwtService.signAsync(payload);
 
     delete user.password;
 
     return {
-      message: 'Login successful',
+      message: 'Login successfully',
       accessToken,
       user,
     };

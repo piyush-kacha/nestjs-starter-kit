@@ -1,15 +1,27 @@
 import { AuthGuard } from '@nestjs/passport';
 import { ExecutionContext, Injectable } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 
-import { UnauthorizedException } from '../../../exceptions/unauthorized.exception';
+import { UnauthorizedException } from 'src/core/exceptions';
+
+import { IS_PUBLIC_KEY } from '../decorators';
 
 @Injectable()
 export class JwtUserAuthGuard extends AuthGuard('authUser') {
+  constructor(private reflector: Reflector) {
+    super();
+  }
+
   JSON_WEB_TOKEN_ERROR = 'JsonWebTokenError';
 
   TOKEN_EXPIRED_ERROR = 'TokenExpiredError';
 
   canActivate(context: ExecutionContext) {
+    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [context.getHandler(), context.getClass()]);
+    if (isPublic) {
+      // 💡 See this condition
+      return true;
+    }
     // Add your custom authentication logic here
     // for example, call super.logIn(request) to establish a session.
     return super.canActivate(context);

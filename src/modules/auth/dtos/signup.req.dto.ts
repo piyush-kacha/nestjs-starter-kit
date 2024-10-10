@@ -1,5 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, IsString, Matches, MaxLength, MinLength } from 'class-validator';
+
+import { IsEmail, IsNotEmpty, IsString, IsStrongPassword, Matches, MaxLength, MinLength } from 'class-validator';
+
+import { Transform } from 'class-transformer';
 
 export class SignupReqDto {
   @ApiProperty({ description: 'Email address of the user', example: 'john@example.com' })
@@ -10,6 +13,7 @@ export class SignupReqDto {
   @ApiProperty({ description: 'Full name of the user', example: 'John Doe' })
   @IsNotEmpty()
   @IsString()
+  @Transform(({ value }) => value.trim().replace(/\s+/g, ' '))
   name: string;
 
   @ApiProperty({
@@ -20,6 +24,7 @@ export class SignupReqDto {
   @IsString()
   @MinLength(8)
   @MaxLength(20)
+  @IsStrongPassword()
   @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
     message: 'Password is too weak',
   })
@@ -28,5 +33,6 @@ export class SignupReqDto {
   @ApiProperty({ description: 'Name of the workspace', example: 'My Company' })
   @IsNotEmpty()
   @IsString()
+  @Transform(({ value }) => value.trim().replace(/\s+/g, ' '))
   workspaceName: string;
 }
