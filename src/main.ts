@@ -23,6 +23,9 @@ const logger: Logger = new Logger('Application Bootstrap');
 // Define a variable to store the clustering status
 let clusteringEnabled: boolean = process.env.CLUSTERING && process.env.CLUSTERING === 'true' ? true : false;
 
+// Define the module type for hot module replacement
+declare const module: any;
+
 /**
  * Bootstrap the NestJS application.
  *
@@ -158,6 +161,15 @@ export async function bootstrap(): Promise<NestExpressApplication> {
       logger.log(`Swagger YAML available at http://${host}:${port}/${swaggerYamlPath}`);
     }
   });
+
+  // Check if the environment is development
+  if (env === E_APP_ENVIRONMENTS.DEVELOPMENT) {
+    // Check if hot module replacement is enabled
+    if (module.hot) {
+      module.hot.accept();
+      module.hot.dispose(() => app.close());
+    }
+  }
 
   // Return the application instance
   return app;

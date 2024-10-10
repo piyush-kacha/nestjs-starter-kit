@@ -3,6 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 import { DatabaseCollectionNames } from 'src/shared';
 
+import { WorkspaceController } from './workspace.controller';
 import { WorkspaceQueryService } from './workspace.query-service';
 import { WorkspaceRepository } from './workspace.repository';
 import { WorkspaceSchema } from './workspace.schema';
@@ -20,6 +21,9 @@ import { WorkspaceSchema } from './workspace.schema';
  * @imports
  * - MongooseModule: Registers the Workspace schema with Mongoose.
  *
+ * @controllers
+ * - WorkspaceController: Controller for handling workspace operations.
+ *
  * @providers
  * - WorkspaceQueryService: Service for querying workspace data.
  * - WorkspaceRepository: Repository for workspace data operations.
@@ -29,6 +33,7 @@ import { WorkspaceSchema } from './workspace.schema';
  */
 @Module({
   imports: [MongooseModule.forFeature([{ name: DatabaseCollectionNames.WORKSPACE, schema: WorkspaceSchema }])],
+  controllers: [WorkspaceController],
   providers: [WorkspaceQueryService, WorkspaceRepository],
   exports: [WorkspaceQueryService],
 })

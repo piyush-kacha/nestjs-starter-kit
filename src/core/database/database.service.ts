@@ -35,11 +35,9 @@ export class DatabaseService implements MongooseOptionsFactory {
    * @returns {MongooseModuleOptions} The Mongoose module options.
    */
   createMongooseOptions(): MongooseModuleOptions {
-    this.logger.error('Creating Mongoose options...');
     const autoPopulate: boolean = this.configService.get<boolean>('database.autoPopulate', {
       infer: true,
     });
-    this.logger.error(`Auto-populate: ${autoPopulate}`);
     return {
       uri: this.configService.get<string>('database.uri', {
         infer: true,

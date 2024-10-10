@@ -33,6 +33,21 @@ export class WorkspaceQueryService {
   }
 
   /**
+   * Finds all workspaces.
+   *
+   * @method findAllWorkspaces
+   * @returns {Promise<Workspace[]>} An array of workspace entities.
+   * @throws {InternalServerErrorException} If an error occurs during the search.
+   */
+  async findAllWorkspaces(): Promise<Workspace[]> {
+    try {
+      return await this.workspaceRepository.findAllDocuments();
+    } catch (error) {
+      throw InternalServerErrorException.INTERNAL_SERVER_ERROR(error);
+    }
+  }
+
+  /**
    * Finds a workspace by its ID.
    *
    * @method findById
@@ -43,6 +58,22 @@ export class WorkspaceQueryService {
   async findById(workspaceId: string): Promise<Workspace> {
     try {
       return await this.workspaceRepository.findById(workspaceId);
+    } catch (error) {
+      throw InternalServerErrorException.INTERNAL_SERVER_ERROR(error);
+    }
+  }
+
+  /**
+   * Finds a workspace by its slug.
+   *
+   * @method findBySlug
+   * @param {string} slug - The slug of the workspace to find.
+   * @returns {Promise<Workspace>} The found workspace entity.
+   * @throws {InternalServerErrorException} If an error occurs during the search.
+   */
+  async findBySlug(slug: string): Promise<Workspace> {
+    try {
+      return await this.workspaceRepository.findBySlug(slug);
     } catch (error) {
       throw InternalServerErrorException.INTERNAL_SERVER_ERROR(error);
     }

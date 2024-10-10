@@ -26,12 +26,26 @@ export type WorkspaceDocument = HydratedDocument<Workspace>;
 export class Workspace extends EntityDocumentHelper<Workspace> {
   @ApiProperty({
     type: String,
+    description: 'The slug of the workspace',
+    example: 'my-workspace',
+  })
+  @Prop({
+    type: String,
+    required: true,
+    unique: true,
+    lowercase: true,
+  })
+  slug: string;
+
+  @ApiProperty({
+    type: String,
     description: 'The name of the workspace',
     example: 'My Workspace',
   })
   @Prop({
     type: String,
     required: true,
+    uppercase: true,
   })
   name: string;
 

@@ -15,6 +15,19 @@ export class UserQueryService {
   constructor(private readonly userRepository: UserRepository) {}
 
   /**
+   * Finds all users.
+   * @returns {Promise<User[]>} - A promise that resolves to an array of user objects.
+   * @throws {InternalServerErrorException} - Throws an internal server error if the query fails.
+   */
+  async findAll(): Promise<User[]> {
+    try {
+      return await this.userRepository.findAllDocuments();
+    } catch (error) {
+      throw InternalServerErrorException.INTERNAL_SERVER_ERROR(error);
+    }
+  }
+
+  /**
    * Finds a user by their email address.
    * @param {string} email - The email address of the user.
    * @returns {Promise<User>} - A promise that resolves to the user object.

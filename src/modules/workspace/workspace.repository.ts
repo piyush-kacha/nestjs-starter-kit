@@ -61,6 +61,16 @@ export class WorkspaceRepository extends DatabaseAbstractRepository<WorkspaceDoc
   }
 
   /**
+   * Finds a Workspace document by its slug.
+   *
+   * @param slug - The slug of the Workspace document to find.
+   * @returns A promise that resolves to the found Workspace document.
+   */
+  async findBySlug(slug: string): Promise<WorkspaceDocument> {
+    return this.findOne({ slug });
+  }
+
+  /**
    * Finds a single Workspace document based on the provided filter and updates it.
    *
    * @param filter - The filter query to match the document.
