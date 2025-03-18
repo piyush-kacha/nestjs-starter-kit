@@ -22,6 +22,9 @@ import {
   ValidationExceptionFilter,
 } from './filters';
 import { AuthModule } from './modules/auth/auth.module';
+import { BullmqModule } from './modules/bullmq/bullmq.module';
+import { ReceiverModule } from './modules/receiver/receiver.module';
+import { SenderModule } from './modules/sender/sender.module';
 import { UserModule } from './modules/user/user.module';
 import { WorkspaceModule } from './modules/workspace/workspace.module';
 
@@ -51,6 +54,9 @@ import { WorkspaceModule } from './modules/workspace/workspace.module';
     AuthModule,
     UserModule,
     WorkspaceModule,
+    SenderModule,
+    ReceiverModule,
+    BullmqModule,
   ],
   controllers: [AppController], // Define the application's controller
   providers: [

@@ -1,3 +1,4 @@
+import { IBullMQRedisConfig, bullMqRedisConfig } from './bullmq.config';
 import { IDatabaseConfig, databaseConfig } from './database.config';
 import { IJwtConfig, jwtConfig } from './jwt.config';
 import { NodeEnv } from '../shared/enums/node-env.enum';
@@ -10,6 +11,7 @@ export interface IConfig {
   clustering: string;
   database: IDatabaseConfig;
   jwt: IJwtConfig;
+  bullmq: IBullMQRedisConfig;
 }
 
 export const configuration = (): Partial<IConfig> => ({
@@ -20,4 +22,5 @@ export const configuration = (): Partial<IConfig> => ({
   clustering: process.env.CLUSTERING,
   database: databaseConfig(),
   jwt: jwtConfig(),
+  bullmq: bullMqRedisConfig(),
 });
