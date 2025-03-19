@@ -6,8 +6,8 @@ import IORedis, { RedisOptions } from 'ioredis';
 import { IBullMQRedisConfig } from '../../config/bullmq.config';
 
 @Injectable()
-export class BullmqService {
-  private readonly logger = new Logger(BullmqService.name);
+export class BullmqQueueService {
+  private readonly logger = new Logger(BullmqQueueService.name);
 
   private readonly connection: IORedis;
 
@@ -18,7 +18,7 @@ export class BullmqService {
       id: 1,
       phoneNumber: '911234567891',
       name: 'Bot 1',
-      MPS: 10,
+      MPS: 5,
     },
     {
       id: 2,
@@ -45,6 +45,7 @@ export class BullmqService {
       retryStrategy: (times) => {
         return Math.min(times * 50, 2000);
       },
+      maxRetriesPerRequest: null,
     };
 
     if (redisConfig.isTlsEnabled) {
@@ -54,9 +55,16 @@ export class BullmqService {
     }
 
     this.connection = new IORedis(redisOptions);
+    this.initialize()
+      .then(() => {
+        this.logger.log('BullMQ Queue initialized');
+      })
+      .catch((error) => {
+        this.logger.error(error);
+      });
   }
 
-  async initialize() {
+  private async initialize() {
     // eslint-disable-next-line no-restricted-syntax
     for (const bot of this.bots) {
       // eslint-disable-next-line no-await-in-loop
@@ -64,7 +72,7 @@ export class BullmqService {
     }
   }
 
-  async addQueue(bot) {
+  private async addQueue(bot: any) {
     // Check if queue already exists
     if (this.queues[bot.id]) {
       this.logger.log(`Queue for ${bot.id} already exists`);
@@ -92,7 +100,7 @@ export class BullmqService {
     const { templateName, recipient, parameters } = message;
 
     const queue: Queue = this.queues[botId];
-    await queue.add(
+    const job = await queue.add(
       'send-template',
       { templateName, recipient, parameters, timestamp: new Date().toISOString() },
       {
@@ -101,6 +109,7 @@ export class BullmqService {
         stackTraceLimit: 20,
       },
     );
+    this.logger.debug(`Template message added to queue: ${job.id}`);
 
     return true;
   }

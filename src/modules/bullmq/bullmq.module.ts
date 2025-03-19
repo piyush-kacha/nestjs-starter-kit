@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
 
-import { BullmqService } from './bullmq.service';
+import { BullmqQueueService } from './bullmq.queue.service';
+import { BullmqWorkerService } from './bullmq.worker.service';
 
 @Module({
-  providers: [BullmqService],
+  providers: [BullmqQueueService, BullmqWorkerService],
+  exports: [BullmqQueueService],
 })
 export class BullmqModule {}
