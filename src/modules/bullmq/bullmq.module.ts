@@ -5,6 +5,6 @@ import { BullmqWorkerService } from './bullmq.worker.service';
 
 @Module({
   providers: [BullmqQueueService, BullmqWorkerService],
-  exports: [BullmqQueueService],
+  exports: [BullmqQueueService, BullmqWorkerService],
 })
 export class BullmqModule {}

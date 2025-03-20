@@ -1,16 +1,20 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { BullmqQueueService } from '../bullmq/bullmq.queue.service';
+import { BullmqWorkerService } from '../bullmq/bullmq.worker.service';
 
 @Injectable()
 export class SenderService {
   private readonly logger = new Logger(SenderService.name);
 
-  constructor(private readonly bullmqService: BullmqQueueService) {}
+  constructor(
+    private readonly bullmqService: BullmqQueueService,
+    private readonly bullmqWorkerService: BullmqWorkerService,
+  ) {}
 
   private generate100TemplateMessage(botId: number) {
     const messages = [];
-    for (let i = 0; i < 10000; i += 1) {
+    for (let i = 0; i < 100; i += 1) {
       messages.push({
         templateName: `template-bot-${botId}`,
         recipient: `91123456789${i}`,
@@ -25,12 +29,23 @@ export class SenderService {
 
   async send100TemplateMessages(botId: number) {
     const messages = this.generate100TemplateMessage(botId);
-    // eslint-disable-next-line no-restricted-syntax
-    for (const message of messages) {
-      // eslint-disable-next-line no-await-in-loop
-      this.bullmqService.sendTemplate(botId, message).catch((err) => {
-        this.logger.error(err, `Failed to send template message for bot ${botId}`);
-      });
+    try {
+      await Promise.all(messages.map((message) => this.bullmqService.sendTemplate(botId, message)));
+    } catch (error) {
+      this.logger.error(error, `Failed to send template messages for bot ${botId}`);
+      throw error;
     }
+  }
+
+  async addBot(bot: any) {
+    await this.bullmqService.addBot(bot);
+    await this.bullmqWorkerService.addBot(bot);
+    return true;
+  }
+
+  async removeBot(botId: number) {
+    await this.bullmqService.removeBot(botId);
+    await this.bullmqWorkerService.removeBot(botId);
+    return true;
   }
 }

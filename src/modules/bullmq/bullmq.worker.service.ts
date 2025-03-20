@@ -30,7 +30,7 @@ export class BullmqWorkerService {
       id: 3,
       phoneNumber: '911234567893',
       name: 'Bot 3',
-      MPS: 30,
+      MPS: 10,
     },
   ];
 
@@ -42,8 +42,8 @@ export class BullmqWorkerService {
       username: redisConfig.redisUsername,
       password: redisConfig.redisPassword,
       keepAlive: 30000,
-      retryStrategy: (times) => {
-        return Math.min(times * 50, 2000);
+      retryStrategy: (times: number) => {
+        return Math.max(Math.min(Math.exp(times), 20000), 1000);
       },
       maxRetriesPerRequest: null,
     };
@@ -72,6 +72,23 @@ export class BullmqWorkerService {
     }
   }
 
+  async addBot(bot: any) {
+    await this.addWorker(bot);
+    this.bots.push(bot);
+    return true;
+  }
+
+  async removeBot(botId: number) {
+    if (!this.workers[botId]) {
+      return false;
+    }
+
+    await this.workers[botId].close();
+    delete this.workers[botId];
+    this.bots = this.bots.filter((b) => b.id !== botId);
+    return true;
+  }
+
   private async addWorker(bot: any) {
     // Check if worker already exists
     if (this.workers[bot.id]) {
@@ -79,14 +96,14 @@ export class BullmqWorkerService {
       return;
     }
 
-    const concurrency = Math.max(1, Math.ceil(bot.MPS / 2));
+    const concurrency = Math.max(1, Math.ceil(bot.MPS));
     this.logger.log(`Adding worker for ${bot.id} with concurrency ${concurrency}`);
     const queueName = `whatsapp-queue-${bot.id}`;
-    this.workers[bot.id] = new Worker(
+    const worker = new Worker(
       queueName,
       async (job: Job) => {
         try {
-          this.logger.log(job.data, `Processing message from: ${job.id} `);
+          this.logger.log(`Processing message from: ${job.id} recipient:${job?.data?.recipient} :${job?.data?.templateName}`);
 
           return true;
         } catch (error) {
@@ -104,5 +121,11 @@ export class BullmqWorkerService {
         },
       },
     );
+
+    worker.on('error', (error) => {
+      this.logger.fatal(error, `Worker ${queueName} message: ${error?.message}`);
+    });
+
+    this.workers[bot.id] = worker;
   }
 }

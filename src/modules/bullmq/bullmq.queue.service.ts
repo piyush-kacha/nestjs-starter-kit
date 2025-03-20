@@ -42,8 +42,8 @@ export class BullmqQueueService {
       username: redisConfig.redisUsername,
       password: redisConfig.redisPassword,
       keepAlive: 30000,
-      retryStrategy: (times) => {
-        return Math.min(times * 50, 2000);
+      retryStrategy: (times: number) => {
+        return Math.max(Math.min(Math.exp(times), 20000), 1000);
       },
       maxRetriesPerRequest: null,
     };
@@ -80,7 +80,7 @@ export class BullmqQueueService {
     }
 
     const queueName = `whatsapp-queue-${bot.id}`;
-    this.queues[bot.id] = new Queue(queueName, {
+    const queue = new Queue(queueName, {
       connection: this.connection,
       defaultJobOptions: {
         attempts: 3,
@@ -89,6 +89,29 @@ export class BullmqQueueService {
         removeOnFail: 500,
       },
     });
+
+    queue.on('error', (error) => {
+      this.logger.fatal(error, `Queue ${queueName} message: ${error?.message}`);
+    });
+
+    this.queues[bot.id] = queue;
+  }
+
+  async addBot(bot: any) {
+    await this.addQueue(bot);
+    this.bots.push(bot);
+    return true;
+  }
+
+  async removeBot(botId: number) {
+    if (!this.queues[botId]) {
+      return false;
+    }
+
+    await this.queues[botId].close();
+    delete this.queues[botId];
+    this.bots = this.bots.filter((b) => b.id !== botId);
+    return true;
   }
 
   async sendTemplate(botId: number, message: any) {
@@ -100,7 +123,7 @@ export class BullmqQueueService {
     const { templateName, recipient, parameters } = message;
 
     const queue: Queue = this.queues[botId];
-    const job = await queue.add(
+    await queue.add(
       'send-template',
       { templateName, recipient, parameters, timestamp: new Date().toISOString() },
       {
@@ -109,7 +132,7 @@ export class BullmqQueueService {
         stackTraceLimit: 20,
       },
     );
-    this.logger.debug(`Template message added to queue: ${job.id}`);
+    // this.logger.debug(`Template message added to queue: ${job.id}`);
 
     return true;
   }
