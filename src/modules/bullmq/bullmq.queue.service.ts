@@ -123,6 +123,7 @@ export class BullmqQueueService {
     const { templateName, recipient, parameters } = message;
 
     const queue: Queue = this.queues[botId];
+
     await queue.add(
       'send-template',
       { templateName, recipient, parameters, timestamp: new Date().toISOString() },
@@ -134,6 +135,20 @@ export class BullmqQueueService {
     );
     // this.logger.debug(`Template message added to queue: ${job.id}`);
 
+    return true;
+  }
+
+  async sendTemplateUsingBulk(botId: number, messages: any) {
+    if (!this.queues[botId]) {
+      this.logger.log(`Queue for ${botId} does not exist`);
+      return false;
+    }
+
+    const queue: Queue = this.queues[botId];
+
+    this.logger.debug(`Adding ${messages.length} template messages to queue: ${queue.name}`);
+    await queue.addBulk(messages);
+    this.logger.debug(`Template messages added to queue: ${queue.name}`);
     return true;
   }
 }

@@ -174,6 +174,18 @@ export class BullmqWorkerService implements OnModuleDestroy {
     return true;
   }
 
+  private delay(timeout: number): Promise<void> {
+    return new Promise((resolve): void => {
+      setTimeout(resolve, timeout);
+    });
+  }
+
+  async processJob(job: Job) {
+    this.logger.log(`Processing message from: ${job.id} recipient:${job?.data?.recipient} :${job?.data?.templateName}`);
+    await this.delay(2000);
+    this.logger.log(`Message processed from: ${job.id} recipient:${job?.data?.recipient} :${job?.data?.templateName}`);
+  }
+
   private async addWorker(bot: any) {
     // Check if worker already exists
     if (this.workers[bot.id]) {
@@ -188,8 +200,7 @@ export class BullmqWorkerService implements OnModuleDestroy {
       queueName,
       async (job: Job) => {
         try {
-          this.logger.log(`Processing message from: ${job.id} recipient:${job?.data?.recipient} :${job?.data?.templateName}`);
-
+          await this.processJob(job).catch();
           return true;
         } catch (error) {
           this.logger.error(error);
@@ -216,13 +227,13 @@ export class BullmqWorkerService implements OnModuleDestroy {
     });
 
     // // Add more event listeners for better monitoring and debugging
-    // worker.on('failed', (job, err) => {
-    //   this.logger.error(`Job ${job.id} failed with error: ${err.message}`);
-    // });
+    worker.on('failed', (job, err) => {
+      this.logger.error(`Job ${job.id} failed with error: ${err.message}`);
+    });
 
-    // worker.on('stalled', (jobId) => {
-    //   this.logger.warn(`Job ${jobId} has stalled`);
-    // });
+    worker.on('stalled', (jobId) => {
+      this.logger.warn(`Job ${jobId} has stalled`);
+    });
 
     // worker.on('completed', (job) => {
     //   this.logger.debug(`Job ${job.id} completed successfully`);
